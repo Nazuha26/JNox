@@ -27,3 +27,8 @@ buildNumber.properties
 *.ear
 *.zip
 *.tar.gz
+
+
+/nox-jre/
+/cpp-core/cmake-build-release-visual-studio/
+/ui/src/main/resources/WinNativeLib.dll

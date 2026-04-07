@@ -7,9 +7,15 @@
     <parent>
         <groupId>io.github.nazuha26</groupId>
         <artifactId>jnox</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>SNAPSHOT</version>
     </parent>
 
+
     <artifactId>ui</artifactId>
+
+
+    <dependencies>
+
+    </dependencies>
 
 </project>

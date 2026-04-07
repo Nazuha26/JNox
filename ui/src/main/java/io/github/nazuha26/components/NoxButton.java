@@ -19,7 +19,7 @@ public class NoxButton extends JButton {
         setBorderPainted(false);
         setOpaque(false);
 
-        setForeground(NoxTheme.FG);
+        setForeground(NoxTheme.TEXT_PRIMARY);
         setFont(NoxTheme.FONT_BOLD);
         setCursor(new Cursor(Cursor.HAND_CURSOR));
 
@@ -54,7 +54,7 @@ public class NoxButton extends JButton {
 
         // Background
         if (isDefaultButton()) {
-            g2.setColor(NoxTheme.ACCENT);
+            g2.setColor(NoxTheme.ACCENT_PRIMARY);
         } else {
             g2.setColor(NoxTheme.TRANSPARENT);
         }
@@ -63,14 +63,14 @@ public class NoxButton extends JButton {
 
         // Outline
         if (!isDefaultButton()) {
-            g2.setColor(NoxTheme.BG_SECOND);
+            g2.setColor(NoxTheme.BG_3);
             g2.setStroke(new BasicStroke(1f));
             g2.draw(new RoundRectangle2D.Float(bgX, bgY, bgW, bgH, arc, arc));
         }
 
         // Focus ring
         if (hasFocus()) {
-            g2.setColor(NoxTheme.ACCENT);
+            g2.setColor(NoxTheme.ACCENT_PRIMARY);
             g2.setStroke(new BasicStroke(2f));
 
             if (isDefaultButton()) {
