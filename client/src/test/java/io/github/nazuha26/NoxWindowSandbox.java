@@ -3,11 +3,15 @@ package io.github.nazuha26;
 import io.github.nazuha26.components.NoxButton;
 import io.github.nazuha26.components.NoxNativeDialog;
 import io.github.nazuha26.components.NoxNativeFrame;
+import io.github.nazuha26.components.NoxOptionPane;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
+
+@Slf4j
 public class NoxWindowSandbox {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
@@ -61,7 +65,63 @@ public class NoxWindowSandbox {
         dialog2.setResizable(false);
         dialog2.setModal(false);
 
-        defButton.addActionListener(e -> JOptionPane.showMessageDialog(frame, "Title", "Default JOptionPane", JOptionPane.ERROR_MESSAGE));
+
+
+        java.util.Random random = new java.util.Random();
+
+        defButton.addActionListener(e -> {
+            String[] randomTexts = {
+                    "A critical error occurred while loading data. Please try again later.",
+
+                    "The operation completed successfully! All changes have been saved. " +
+                            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. " +
+                            "Maecenas pretium sem nec mollis condimentum. Morbi risus lacus, aliquet vel nunc in, scelerisque pretium risus.",
+
+                    "You are using an outdated version of the program. An update is recommended.",
+
+                    "Are you sure you want to permanently delete these files?",
+
+                    "Nam bibendum nisl sit amet lorem tristique lobortis." +
+                            "Praesent venenatis maximus sollicitudin. Mauris interdum nulla erat, eu blandit turpis semper nec." +
+                            "Proin eu risus nulla. Curabitur fermentum, leo ac ornare finibus, tellus augue porttitor mi, vitae auctor dolor est sit amet mauris." +
+                            "Phasellus diam neque, varius et aliquam at, condimentum vel leo. Donec sed congue lectus." +
+                            "Donec ac turpis ac sapien porttitor ultricies non nec eros. Donec egestas ligula elementum finibus varius." +
+                            "Etiam molestie lorem nisl, in tincidunt sem pretium ac. Nulla non justo sed nunc dapibus vulputate at at eros." +
+                            "Sed nibh leo, aliquam a dignissim eu, gravida fringilla metus." +
+                            "Nulla sed augue neque. Donec fringilla placerat ipsum sagittis tempor."
+            };
+
+            NoxOptionPane.MessageType[] messageTypes = {
+                    NoxOptionPane.MessageType.ERROR,
+                    NoxOptionPane.MessageType.INFORMATION,
+                    NoxOptionPane.MessageType.WARNING,
+                    NoxOptionPane.MessageType.QUESTION,
+                    NoxOptionPane.MessageType.PLAIN
+            };
+
+            int randomIndex = random.nextInt(messageTypes.length);
+
+            String selectedText = randomTexts[randomIndex];
+            NoxOptionPane.MessageType selectedType = messageTypes[randomIndex];
+
+            if (selectedType == NoxOptionPane.MessageType.QUESTION) {
+                NoxOptionPane.OptionResult result = NoxOptionPane.showConfirmDialog(
+                        frame,
+                        selectedText,
+                        NoxOptionPane.OptionType.YES_NO_CANCEL,
+                        selectedType
+                );
+                log.info("User selected: {}", result);
+            }
+            else {
+                NoxOptionPane.showMessageDialog(
+                        frame,
+                        selectedText,
+                        selectedType
+                );
+            }
+        });
+
         dialogButton1.addActionListener(e -> dialog1.setVisible(true));
         dialogButton2.addActionListener(e -> dialog2.setVisible(true));
 
