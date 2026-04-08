@@ -15,7 +15,13 @@
 
 
     <dependencies>
-
+        <!-- Source: https://mvnrepository.com/artifact/com.github.weisj/jsvg -->
+        <dependency>
+            <groupId>com.github.weisj</groupId>
+            <artifactId>jsvg</artifactId>
+            <version>1.7.2</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
 </project>
