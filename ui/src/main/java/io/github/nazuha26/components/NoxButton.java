@@ -58,7 +58,7 @@ public class NoxButton extends JButton {
         } else {
             g2.setColor(NoxTheme.TRANSPARENT);
         }
-        int arc = 15;
+        int arc = 10;
         g2.fill(new RoundRectangle2D.Float(bgX, bgY, bgW, bgH, arc, arc));
 
         // Outline
