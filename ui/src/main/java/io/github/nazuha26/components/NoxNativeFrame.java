@@ -12,9 +12,9 @@ public class NoxNativeFrame extends JFrame {
 
     private final NoxWindowDelegate delegate;
 
-    @Getter private final CaptionButton minimizeButton = new CaptionButton(CaptionButtonType.MINIMIZE);
-    @Getter private final CaptionButton maximizeButton = new CaptionButton(CaptionButtonType.MAXIMIZE);
-    @Getter private final CaptionButton closeButton = new CaptionButton(CaptionButtonType.CLOSE);
+    @Getter private final CaptionButton minimizeButton = new CaptionButton(CaptionButton.CaptionButtonType.MINIMIZE);
+    @Getter private final CaptionButton maximizeButton = new CaptionButton(CaptionButton.CaptionButtonType.MAXIMIZE);
+    @Getter private final CaptionButton closeButton = new CaptionButton(CaptionButton.CaptionButtonType.CLOSE);
 
     public NoxNativeFrame(String title) {
         super(title);

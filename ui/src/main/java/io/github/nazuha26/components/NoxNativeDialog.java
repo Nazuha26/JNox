@@ -8,7 +8,7 @@ import java.awt.event.WindowEvent;
 public class NoxNativeDialog extends JDialog {
 
     private final NoxWindowDelegate delegate;
-    @Getter private final CaptionButton closeButton = new CaptionButton(CaptionButtonType.CLOSE);
+    @Getter private final CaptionButton closeButton = new CaptionButton(CaptionButton.CaptionButtonType.CLOSE);
 
     public NoxNativeDialog(Frame owner, String title, boolean modal) {
         super(owner, title, modal);

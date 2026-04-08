@@ -11,6 +11,10 @@ import java.awt.geom.RoundRectangle2D;
 
 public class CaptionButton extends JButton {
 
+    public enum CaptionButtonType {
+        MINIMIZE, MAXIMIZE, CLOSE
+    }
+
     private boolean isHovered = false;
     private final CaptionButtonType buttonType;
 
