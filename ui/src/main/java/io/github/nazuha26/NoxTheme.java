@@ -31,14 +31,18 @@ public class NoxTheme {
     public static final Color TRANSPARENT = new Color(0, 0, 0, 0);
 
     public static final Color ACCENT_PRIMARY = new Color(38, 123, 114);
-    public static final Color ACCENT_HOVER = ACCENT_PRIMARY.brighter();
+    public static final Color ACCENT_SECONDARY = ACCENT_PRIMARY.darker();
 
     public static final Color BG_PRIMARY = new Color(21, 32, 34);
     public static final Color BG_SURFACE = new Color(22, 44, 48);
+    public static final Color OUTLINE = new Color(60, 71, 63);
 
     public static final Color TEXT_PRIMARY = new Color(189, 209, 191);
 
-    public static final Color BG_3 = new Color(65, 66, 69);
+    public static final Color SCROLL_TRACK = TRANSPARENT;
+    public static final Color SCROLL_TRACK_HOVER = new Color(ACCENT_PRIMARY.getRed(), ACCENT_PRIMARY.getGreen(), ACCENT_PRIMARY.getBlue(), 40);
+    public static final Color SCROLL_THUMB = new Color(ACCENT_SECONDARY.getRed(), ACCENT_SECONDARY.getGreen(), ACCENT_SECONDARY.getBlue(), 120);
+    public static final Color SCROLL_THUMB_HOVER = new Color(ACCENT_PRIMARY.getRed(), ACCENT_PRIMARY.getGreen(), ACCENT_PRIMARY.getBlue(), 120);
 
     public static final Color ERROR = new Color(255, 68, 69);
     public static final Color WARNING = new Color(245, 179, 94);

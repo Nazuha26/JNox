@@ -63,7 +63,7 @@ public class NoxButton extends JButton {
 
         // Outline
         if (!isDefaultButton()) {
-            g2.setColor(NoxTheme.BG_3);
+            g2.setColor(NoxTheme.OUTLINE);
             g2.setStroke(new BasicStroke(1f));
             g2.draw(new RoundRectangle2D.Float(bgX, bgY, bgW, bgH, arc, arc));
         }
