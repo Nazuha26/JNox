@@ -1,6 +1,7 @@
 package io.github.nazuha26.components;
 
 import io.github.nazuha26.NoxTheme;
+import io.github.nazuha26.utils.IconManager;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
@@ -8,7 +9,6 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.net.URL;
 
 /**
  * <table class="borderless">
@@ -130,11 +130,8 @@ public class NoxOptionPane {
             messageArea.setFocusable(false);
             messageArea.setOpaque(true);
 
-            // Wrap in JScrollPane  todo custom NoxScrollPane
-            JScrollPane scrollPane = new JScrollPane(messageArea);
-            scrollPane.setBorder(null);
-            scrollPane.setOpaque(false);
-            scrollPane.getViewport().setOpaque(false);
+            // Wrap in JScrollPane
+            NoxScrollPane scrollPane = new NoxScrollPane(messageArea);
             scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
             body.add(scrollPane, BorderLayout.CENTER);
 
@@ -227,10 +224,6 @@ public class NoxOptionPane {
 
 
 
-
-
-
-
     private static String getDefaultTitle(MessageType messageType) {
         return switch (messageType) {
             case ERROR -> "Error";
@@ -247,34 +240,15 @@ public class NoxOptionPane {
         }
 
         String path = switch (messageType) {
-            case ERROR -> "/icons/svg/error.svg";
-            case INFORMATION -> "/icons/svg/info.svg";
-            case WARNING -> "/icons/svg/warning.svg";
-            case QUESTION -> "/icons/svg/question.svg";
+            case ERROR -> "/icons/svg/notifications/error.svg";
+            case INFORMATION -> "/icons/svg/notifications/info.svg";
+            case WARNING -> "/icons/svg/notifications/warning.svg";
+            case QUESTION -> "/icons/svg/notifications/question.svg";
             default -> throw new IllegalStateException("Unexpected value: " + messageType);
         };
 
-        URL imgURL = NoxOptionPane.class.getResource(path);
-        if (imgURL != null) {
-            try {
-                return new SvgIcon(imgURL, ICON_SIZE, ICON_SIZE);
-            } catch (Exception e) {
-                log.error("Failed to load SVG icon: {}", path, e);
-                String fallbackPath = path.replace("svg", "png");
-                URL pngURL = NoxOptionPane.class.getResource(fallbackPath);
-
-                if (pngURL != null) {
-                    return new ImageIcon(pngURL);
-                } else {
-                    log.error("Fallback PNG icon not found: {}", fallbackPath);
-                }
-            }
-        } else {
-            log.error("Icon not found: {}", path);
-        }
-
-        // get default icon
-        return UIManager.getIcon("OptionPane." + getFallbackString(messageType) + "Icon");
+        Icon swingFallback = UIManager.getIcon("OptionPane." + getFallbackString(messageType) + "Icon");
+        return IconManager.getSvgIcon(path, ICON_SIZE, ICON_SIZE, swingFallback);
     }
 
     private static String getFallbackString(MessageType messageType) {
