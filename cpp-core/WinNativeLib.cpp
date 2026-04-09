@@ -259,7 +259,7 @@ extern "C" {
 
 
     JNIEXPORT void JNICALL Java_io_github_nazuha26_WinNativeLib_configureWindow(
-        JNIEnv* env, jobject, jobject component, jint titleBarHeight, jint captionButtonsWidth, jboolean isResizable)
+        JNIEnv* env, jobject, jobject component, jint titleBarHeight, jint captionButtonsWidth, jboolean isResizable, jboolean isMaximizable)
     {
         HWND hwnd = Utils::GetHwndFromJavaComponent(env, component);
         if (!hwnd) return;
@@ -267,15 +267,14 @@ extern "C" {
         LONG_PTR style = GetWindowLongPtrW(hwnd, GWL_STYLE);
         style |= WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX;
 
-        if (isResizable) { style |= WS_THICKFRAME | WS_MAXIMIZEBOX; }
-        else
-        {
-            style &= ~WS_THICKFRAME;
-            style &= ~WS_MAXIMIZEBOX;
-        }
-        SetWindowLongPtrW(hwnd, GWL_STYLE, style);
+        if (isResizable) { style |= WS_THICKFRAME; }
+        else { style &= ~WS_THICKFRAME; }
 
-        // Получаем данные для обновления
+        if (isMaximizable) { style |= WS_MAXIMIZEBOX; }
+        else { style &= ~WS_MAXIMIZEBOX; }
+
+        SetWindowLongPtrW(hwnd, GWL_STYLE, style);
+        
         Utils::WindowData* data = static_cast<Utils::WindowData*>(GetPropW(hwnd, L"NoxWinData"));
         if (data)
         {

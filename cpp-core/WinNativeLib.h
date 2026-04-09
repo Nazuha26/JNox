@@ -29,7 +29,7 @@ JNIEXPORT void JNICALL Java_io_github_nazuha26_WinNativeLib_unhookWindow
  * Signature: (Ljava/awt/Component;IIZ)V
  */
 JNIEXPORT void JNICALL Java_io_github_nazuha26_WinNativeLib_configureWindow
-  (JNIEnv *, jobject, jobject, jint, jint, jboolean);
+  (JNIEnv *, jobject, jobject, jint, jint, jboolean, jboolean);
 
 /*
  * Class:     io_github_nazuha26_WinNativeLib

@@ -104,7 +104,7 @@ public class NoxWindowDelegate {
         captionButtons.repaint();
 
         if (OsUtils.isWindows() && nativeInstalled) {
-            nativeLib.configureWindow(window, TITLE_BAR_HEIGHT, totalWidth, isWindowResizable());
+            nativeLib.configureWindow(window, TITLE_BAR_HEIGHT, totalWidth, isWindowResizable(), isWindowMaximizable());
         }
     }
 
@@ -166,7 +166,7 @@ public class NoxWindowDelegate {
     private void installNativeWindow() {
         int captionWidth = captionButtons.getPreferredSize().width;
         nativeLib.hookWindow(window);
-        nativeLib.configureWindow(window, TITLE_BAR_HEIGHT, captionWidth, isWindowResizable());
+        nativeLib.configureWindow(window, TITLE_BAR_HEIGHT, captionWidth, isWindowResizable(), isWindowMaximizable());
         nativeLib.setBackgroundColor(window, NoxTheme.BG_PRIMARY.getRed(), NoxTheme.BG_PRIMARY.getGreen(), NoxTheme.BG_PRIMARY.getBlue());
         nativeLib.setBorderColor(window, NoxTheme.ACCENT_PRIMARY.getRed(), NoxTheme.ACCENT_PRIMARY.getGreen(), NoxTheme.ACCENT_PRIMARY.getBlue());
         nativeLib.setMinSize(window, captionWidth + TITLE_BAR_LEFT_INSET + 128, TITLE_BAR_HEIGHT);
@@ -176,6 +176,11 @@ public class NoxWindowDelegate {
     private boolean isWindowResizable() {
         if (window instanceof Frame) return ((Frame) window).isResizable();
         if (window instanceof Dialog) return ((Dialog) window).isResizable();
+        return false;
+    }
+
+    private boolean isWindowMaximizable() {
+        if (window instanceof Frame) return ((Frame) window).isResizable();
         return false;
     }
 }

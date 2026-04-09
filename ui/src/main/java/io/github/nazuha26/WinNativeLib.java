@@ -41,7 +41,7 @@ public class WinNativeLib {
 
     public native void hookWindow(Component window);
     public native void unhookWindow(Component window);
-    public native void configureWindow(Component window, int titleBarHeight, int captionButtonsWidth, boolean isResizeable);
+    public native void configureWindow(Component window, int titleBarHeight, int captionButtonsWidth, boolean isResizeable, boolean isMaximizable);
     public native void setBackgroundColor(Component component, int r, int g, int b);
     public native void setBorderColor(Component component, int r, int g, int b);
     public native void setMinSize(Component window, int minWidth, int minHeight);
