@@ -155,6 +155,7 @@ public class NoxWindowDelegate {
         nativeLib.configureWindow(window, TITLE_BAR_HEIGHT, captionWidth, isWindowResizable());
         nativeLib.setBackgroundColor(window, NoxTheme.BG_PRIMARY.getRed(), NoxTheme.BG_PRIMARY.getGreen(), NoxTheme.BG_PRIMARY.getBlue());
         nativeLib.setBorderColor(window, NoxTheme.ACCENT_PRIMARY.getRed(), NoxTheme.ACCENT_PRIMARY.getGreen(), NoxTheme.ACCENT_PRIMARY.getBlue());
+        nativeLib.setMinSize(window, captionWidth + TITLE_BAR_LEFT_INSET + 128, TITLE_BAR_HEIGHT);
         nativeInstalled = true;
     }
 

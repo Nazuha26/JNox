@@ -20,6 +20,8 @@ namespace Utils
         int titleBarHeight;
         int captionButtonsWidth;
         COLORREF bgColor;
+        int minWidth;
+        int minHeight;
     };
 
 
@@ -192,6 +194,22 @@ namespace Utils
                 return HTCLIENT;
             }
 
+            // Sent to a window when the size or position of the window is about to change.
+            // Override the window's default minimum tracking size.
+            case WM_GETMINMAXINFO: {
+                CallWindowProcW(data->originalWndProc, hwnd, msg, wParam, lParam);
+
+                MINMAXINFO* mmi = reinterpret_cast<MINMAXINFO*>(lParam);
+
+                UINT dpi = GetDpiForWindow(hwnd);
+                double scale = static_cast<double>(dpi) / 96.0;
+
+                mmi->ptMinTrackSize.x = static_cast<int>(data->minWidth * scale);
+                mmi->ptMinTrackSize.y = static_cast<int>(data->minHeight * scale);
+
+                return 0;
+            }
+
             // Window background must be erased
             // Repaint native background
             case WM_ERASEBKGND: {
@@ -228,7 +246,7 @@ extern "C" {
         if (!hwnd || GetPropW(hwnd, L"NoxWinData"))
             return;
 
-        Utils::WindowData* data = new Utils::WindowData { nullptr, 30, 100, RGB(255, 255, 255) }; // NOLINT
+        Utils::WindowData* data = new Utils::WindowData { nullptr, 32, 96, RGB(255, 255, 255), 256, 32}; // NOLINT
         data->originalWndProc = reinterpret_cast<WNDPROC>(SetWindowLongPtrW(
             hwnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(&Utils::CustomWndProc)));
 
@@ -369,5 +387,20 @@ extern "C" {
         const COLORREF color = RGB(r, g, b);
 
         DwmSetWindowAttribute(hwnd, DWMWA_BORDER_COLOR, &color, sizeof(color));
+    }
+
+    JNIEXPORT void JNICALL Java_io_github_nazuha26_WinNativeLib_setMinSize(
+        JNIEnv* env, jobject, jobject component, jint minWidth, jint minHeight)
+    {
+        HWND hwnd = Utils::GetHwndFromJavaComponent(env, component);
+        if (!hwnd)
+            return;
+
+        Utils::WindowData* data = static_cast<Utils::WindowData*>(GetPropW(hwnd, L"NoxWinData"));
+        if (data)
+        {
+            data->minWidth = static_cast<int>(minWidth);
+            data->minHeight = static_cast<int>(minHeight);
+        }
     }
 }

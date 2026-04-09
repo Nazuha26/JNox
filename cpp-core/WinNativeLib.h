@@ -49,6 +49,14 @@ JNIEXPORT void JNICALL Java_io_github_nazuha26_WinNativeLib_setBorderColor
 
 /*
  * Class:     io_github_nazuha26_WinNativeLib
+ * Method:    setMinSize
+ * Signature: (Ljava/awt/Component;II)V
+ */
+JNIEXPORT void JNICALL Java_io_github_nazuha26_WinNativeLib_setMinSize
+  (JNIEnv *, jobject, jobject, jint, jint);
+
+/*
+ * Class:     io_github_nazuha26_WinNativeLib
  * Method:    getDPIScale
  * Signature: (Ljava/awt/Component;)[D
  */

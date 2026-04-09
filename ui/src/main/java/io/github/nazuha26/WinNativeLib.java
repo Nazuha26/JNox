@@ -44,6 +44,7 @@ public class WinNativeLib {
     public native void configureWindow(Component window, int titleBarHeight, int captionButtonsWidth, boolean isResizeable);
     public native void setBackgroundColor(Component component, int r, int g, int b);
     public native void setBorderColor(Component component, int r, int g, int b);
+    public native void setMinSize(Component window, int minWidth, int minHeight);
     public native double[] getDPIScale(Component window);
     public native void minimizeWindow(Component window);
     public native void maximizeWindow(Component window);
