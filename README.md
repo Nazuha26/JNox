@@ -19,5 +19,3 @@ This project is for building a cleaner desktop UI in Swing. It gives more contro
 ## Demo
 
 ![Demo](docs/demo.gif)
-
-_or put your preview here later._
