@@ -4,12 +4,12 @@ import io.github.nazuha26.components.NoxButton;
 import io.github.nazuha26.components.NoxNativeDialog;
 import io.github.nazuha26.components.NoxNativeFrame;
 import io.github.nazuha26.components.NoxOptionPane;
+import io.github.nazuha26.components.NoxScrollPane; // Не забудьте импорт
 import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-
 
 @Slf4j
 public class NoxWindowSandbox {
@@ -20,12 +20,9 @@ public class NoxWindowSandbox {
         });
     }
 
-
-
     private static NoxNativeFrame createDefaultWindow(String windowTitle) {
         NoxNativeFrame frame = new NoxNativeFrame(windowTitle);
-        frame.setSize(520, 360);
-        frame.setMinimumSize(new Dimension(420, 280));
+        frame.setSize(520, 420);
         frame.setLocationRelativeTo(null);
 
         JPanel body = frame.getBody();
@@ -57,6 +54,9 @@ public class NoxWindowSandbox {
         NoxButton dialogButton2 = new NoxButton("Show Nox Dialog 2");
         dialogButton2.setPreferredSize(new Dimension(180, 40));
 
+        NoxButton scrollTestButton = new NoxButton("NoxScrollPane Test");
+        scrollTestButton.setPreferredSize(new Dimension(180, 40));
+
         NoxNativeDialog dialog1 = createDefaultDialog(frame);
         dialog1.setResizable(true);
         dialog1.setModal(true);
@@ -65,22 +65,18 @@ public class NoxWindowSandbox {
         dialog2.setResizable(false);
         dialog2.setModal(false);
 
-
+        NoxNativeDialog scrollDialog = createScrollPaneDialog(frame);
 
         java.util.Random random = new java.util.Random();
 
         defButton.addActionListener(e -> {
             String[] randomTexts = {
                     "A critical error occurred while loading data. Please try again later.",
-
                     "The operation completed successfully! All changes have been saved. " +
                             "Lorem ipsum dolor sit amet, consectetur adipiscing elit. " +
                             "Maecenas pretium sem nec mollis condimentum. Morbi risus lacus, aliquet vel nunc in, scelerisque pretium risus.",
-
                     "You are using an outdated version of the program. An update is recommended.",
-
                     "Are you sure you want to permanently delete these files?",
-
                     "Nam bibendum nisl sit amet lorem tristique lobortis." +
                             "Praesent venenatis maximus sollicitudin. Mauris interdum nulla erat, eu blandit turpis semper nec." +
                             "Proin eu risus nulla. Curabitur fermentum, leo ac ornare finibus, tellus augue porttitor mi, vitae auctor dolor est sit amet mauris." +
@@ -125,7 +121,8 @@ public class NoxWindowSandbox {
         dialogButton1.addActionListener(e -> dialog1.setVisible(true));
         dialogButton2.addActionListener(e -> dialog2.setVisible(true));
 
-
+        // 3. Вешаем слушатель на новую кнопку
+        scrollTestButton.addActionListener(e -> scrollDialog.setVisible(true));
 
         gbc.gridy = 0;
         body.add(title, gbc);
@@ -138,12 +135,16 @@ public class NoxWindowSandbox {
         body.add(defButton, gbc);
 
         gbc.gridy = 3;
-        gbc.insets = new Insets(0, 0, 0, 0);
+        gbc.insets = new Insets(0, 0, 10, 0);
         body.add(dialogButton1, gbc);
 
         gbc.gridy = 4;
-        gbc.insets = new Insets(0, 0, 0, 0);
+        gbc.insets = new Insets(0, 0, 10, 0);
         body.add(dialogButton2, gbc);
+
+        gbc.gridy = 5;
+        gbc.insets = new Insets(0, 0, 0, 0);
+        body.add(scrollTestButton, gbc);
 
         return frame;
     }
@@ -158,9 +159,9 @@ public class NoxWindowSandbox {
         body.setBorder(new EmptyBorder(20, 20, 20, 20));
 
         JLabel messageLabel = new JLabel(
-                "Lorem ipsum dolor sit amet, consectetur adipiscing elit." +
+                "<html><div style='text-align: center;'>Lorem ipsum dolor sit amet, consectetur adipiscing elit." +
                         "Maecenas pretium sem nec mollis condimentum." +
-                        "Morbi risus lacus, aliquet vel nunc in, scelerisque pretium risus",
+                        "Morbi risus lacus, aliquet vel nunc in, scelerisque pretium risus</div></html>",
                 SwingConstants.CENTER);
 
         messageLabel.setFont(NoxTheme.FONT_PLAIN);
@@ -177,6 +178,33 @@ public class NoxWindowSandbox {
         buttonPanel.add(okButton);
 
         body.add(buttonPanel, BorderLayout.SOUTH);
+
+        return dialog;
+    }
+
+    private static NoxNativeDialog createScrollPaneDialog(NoxNativeFrame owner) {
+        NoxNativeDialog dialog = new NoxNativeDialog(owner, "ScrollPane Test", true);
+        dialog.setSize(400, 300);
+        dialog.setLocationRelativeTo(owner);
+
+        JPanel body = dialog.getBody();
+        body.setLayout(new BorderLayout());
+        body.setBorder(new EmptyBorder(20, 20, 20, 20));
+
+        JTextArea textArea = new JTextArea();
+        StringBuilder sb = new StringBuilder();
+        for (int i = 1; i <= 50; i++) {
+            sb.append(i).append(". ").append("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas pretium sem nec mollis condimentum.").append("\n");
+        }
+        textArea.setText(sb.toString());
+        textArea.setFont(NoxTheme.FONT_PLAIN);
+        textArea.setForeground(NoxTheme.TEXT_PRIMARY);
+        textArea.setBackground(NoxTheme.BG_PRIMARY);
+        textArea.setEditable(false);
+        textArea.setCaretPosition(0);
+
+        NoxScrollPane scrollPane = new NoxScrollPane(textArea);
+        body.add(scrollPane, BorderLayout.CENTER);
 
         return dialog;
     }
