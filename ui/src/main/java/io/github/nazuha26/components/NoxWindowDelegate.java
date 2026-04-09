@@ -49,9 +49,23 @@ public class NoxWindowDelegate {
         configureBody();
         installFallbackDrag(onDoubleClickTitleBar);
 
+        if (window instanceof NoxNativeFrame frame) {
+            frame.addWindowStateListener(e -> {
+                boolean isMaximized = (e.getNewState() & Frame.MAXIMIZED_BOTH) == Frame.MAXIMIZED_BOTH;
+                for (CaptionButton btn : buttons) {
+                    if (btn.getButtonType() == CaptionButton.CaptionButtonType.MAXIMIZE) {
+                        btn.setWindowMaximized(isMaximized);
+                        break;
+                    }
+                }
+            });
+        }
+
         contentPane.add(titleBar, BorderLayout.NORTH);
         contentPane.add(body, BorderLayout.CENTER);
     }
+
+
 
     private void configureTitleBar(String title, CaptionButton... buttons) {
         titleBar.setOpaque(true);

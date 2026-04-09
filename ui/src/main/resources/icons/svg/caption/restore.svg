@@ -1,3 +1,8 @@
+<!--
+    Copyright (c) 2026 Nazuha26 (https://github.com/Nazuha26).
+    All rights reserved.
+-->
+
 <svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
     <path d="M 44 44 L 44 34 A 10 10 0 0 1 54 24 L 94 24 A 10 10 0 0 1 104 34 L 104 74 A 10 10 0 0 1 94 84 L 84 84" fill="none" stroke="#BDD1BF" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" />
     <rect x="24" y="44" width="60" height="60" rx="10" ry="10" fill="none" stroke="#BDD1BF" stroke-width="12" stroke-linejoin="round" />

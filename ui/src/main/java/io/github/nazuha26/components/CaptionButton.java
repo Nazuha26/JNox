@@ -1,12 +1,13 @@
 package io.github.nazuha26.components;
 
 import io.github.nazuha26.NoxTheme;
+import io.github.nazuha26.utils.IconManager;
+import lombok.Getter;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 
 public class CaptionButton extends JButton {
@@ -15,11 +16,22 @@ public class CaptionButton extends JButton {
         MINIMIZE, MAXIMIZE, CLOSE
     }
 
+    private static final int ICON_SIZE = 16;
+
     private boolean isHovered = false;
-    private final CaptionButtonType buttonType;
+    @Getter private final CaptionButtonType buttonType;
+    private Icon currentIcon;
+    private Icon maximizeIcon;
+    private Icon restoreIcon;
+
+    private static final int caption_alpha = 160;
+    private static final Color MINIMIZE_COLOR = new Color(NoxTheme.SUCCESS.getRed(), NoxTheme.SUCCESS.getGreen(), NoxTheme.SUCCESS.getBlue(), caption_alpha);
+    private static final Color MAXIMIZE_COLOR = new Color(NoxTheme.WARNING.getRed(), NoxTheme.WARNING.getGreen(), NoxTheme.WARNING.getBlue(), caption_alpha);
+    private static final Color CLOSE_COLOR = new Color(NoxTheme.ERROR.getRed(), NoxTheme.ERROR.getGreen(), NoxTheme.ERROR.getBlue(), caption_alpha);
 
     public CaptionButton(CaptionButtonType buttonType) {
         this.buttonType = buttonType;
+        loadIcons();
 
         setContentAreaFilled(false);
         setFocusPainted(false);
@@ -44,6 +56,29 @@ public class CaptionButton extends JButton {
         });
     }
 
+    private void loadIcons() {
+        switch (buttonType) {
+            case MINIMIZE -> {
+                currentIcon = IconManager.getSvgIcon("/icons/svg/caption/minimize.svg", ICON_SIZE, ICON_SIZE, null);
+            }
+            case MAXIMIZE -> {
+                maximizeIcon = IconManager.getSvgIcon("/icons/svg/caption/maximize.svg", ICON_SIZE, ICON_SIZE, null);
+                restoreIcon = IconManager.getSvgIcon("/icons/svg/caption/restore.svg", ICON_SIZE, ICON_SIZE, null);
+                currentIcon = maximizeIcon;
+            }
+            case CLOSE -> {
+                currentIcon = IconManager.getSvgIcon("/icons/svg/caption/close.svg", ICON_SIZE, ICON_SIZE, null);
+            }
+        }
+    }
+
+    public void setWindowMaximized(boolean maximized) {
+        if (this.buttonType == CaptionButtonType.MAXIMIZE) {
+            this.currentIcon = maximized ? restoreIcon : maximizeIcon;
+            repaint();
+        }
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g.create();
@@ -59,28 +94,19 @@ public class CaptionButton extends JButton {
             g2.setColor(NoxTheme.BG_SURFACE);
         } else {
             switch (buttonType) {
-                case MINIMIZE -> g2.setColor(NoxTheme.SUCCESS);
-                case MAXIMIZE -> g2.setColor(NoxTheme.WARNING);
-                case CLOSE -> g2.setColor(NoxTheme.ERROR);
+                case MINIMIZE -> g2.setColor(MINIMIZE_COLOR);
+                case MAXIMIZE -> g2.setColor(MAXIMIZE_COLOR);
+                case CLOSE -> g2.setColor(CLOSE_COLOR);
             }
         }
         int padding = 2;
         g2.fill(new RoundRectangle2D.Float(padding, padding, w - 2 * padding, h - 2 * padding, (float) w, (float) h));
 
-        // --- Icons Fallback Painting ---
-        int p4w = w / 3;
-        int p4h = h / 3;
-
-        if (!isHovered) {
-            g2.setColor(NoxTheme.TEXT_PRIMARY);
-            switch (buttonType) {
-                case MINIMIZE -> g2.drawLine(p4w, h - p4h, w - p4w, h - p4h);
-                case MAXIMIZE -> g2.drawRect(p4w, p4h, w - 2 * p4w, h - 2 * p4h);
-                case CLOSE -> {
-                    g2.drawLine(p4w, p4h, w - p4w, h - p4h);
-                    g2.drawLine(w - p4w, p4h, p4w, h - p4h);
-                }
-            }
+        // SVG Icons
+        if (currentIcon != null) {
+            int iconX = (w - currentIcon.getIconWidth()) / 2;
+            int iconY = (h - currentIcon.getIconHeight()) / 2;
+            currentIcon.paintIcon(this, g2, iconX, iconY);
         }
 
         g2.dispose();
