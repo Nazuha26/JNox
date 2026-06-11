@@ -17,8 +17,12 @@ target_link_libraries(WinNativeLib PRIVATE
 
 
 add_custom_command(TARGET WinNativeLib POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E make_directory
+        "${CMAKE_CURRENT_SOURCE_DIR}/../jnox-ui/src/main/resources/native/windows/x64"
+
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
         "$<TARGET_FILE:WinNativeLib>"
-        "${CMAKE_CURRENT_SOURCE_DIR}/../ui/src/main/resources/$<TARGET_FILE_NAME:WinNativeLib>"
-        COMMENT "Copying WinNativeLib.dll to the ui module resources..."
+        "${CMAKE_CURRENT_SOURCE_DIR}/../jnox-ui/src/main/resources/native/windows/x64/$<TARGET_FILE_NAME:WinNativeLib>"
+
+        COMMENT "Copying WinNativeLib.dll to jnox-ui resources..."
 )

@@ -31,4 +31,4 @@ buildNumber.properties
 
 /nox-jre/
 /cpp-core/cmake-build-release-visual-studio/
-/ui/src/main/resources/WinNativeLib.dll
+/jnox-ui/src/main/resources/native/windows/x64/WinNativeLib.dll

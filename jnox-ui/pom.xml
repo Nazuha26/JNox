@@ -7,11 +7,11 @@
     <parent>
         <groupId>io.github.nazuha26</groupId>
         <artifactId>jnox</artifactId>
-        <version>SNAPSHOT</version>
+        <version>0.1.0</version>
     </parent>
 
 
-    <artifactId>ui</artifactId>
+    <artifactId>jnox-ui</artifactId>
 
 
     <dependencies>
@@ -21,6 +21,21 @@
             <artifactId>jsvg</artifactId>
             <version>1.7.2</version>
             <scope>compile</scope>
+        </dependency>
+
+        <!-- Logging library -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>2.0.12</version>
+        </dependency>
+
+        <!-- Set of annotations -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.30</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
