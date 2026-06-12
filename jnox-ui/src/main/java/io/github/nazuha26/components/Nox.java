@@ -47,6 +47,13 @@ public final class Nox {
         UIManager.put("TitledBorder.font", NoxTheme.FONT_BOLD.deriveFont(15f));
         UIManager.put("TitledBorder.titleColor", NoxTheme.TEXT_PRIMARY);
 
+        UIManager.put("TextPane.font", NoxTheme.FONT_PLAIN);
+        UIManager.put("TextPane.foreground", NoxTheme.TEXT_PRIMARY);
+        UIManager.put("TextPane.background", NoxTheme.BG_PRIMARY);
+        UIManager.put("TextPane.caretForeground", NoxTheme.TEXT_PRIMARY);
+        UIManager.put("TextPane.selectionBackground", NoxTheme.ACCENT_PRIMARY);
+        UIManager.put("TextPane.selectionForeground", NoxTheme.TEXT_PRIMARY);
+
         installed = true;
     }
 
@@ -105,5 +112,10 @@ public final class Nox {
     public static NoxPasswordFieldBuilder passwordField(String text) {
         install();
         return new NoxPasswordFieldBuilder().text(text);
+    }
+
+    public static NoxLogPaneBuilder logPane() {
+        install();
+        return new NoxLogPaneBuilder();
     }
 }
