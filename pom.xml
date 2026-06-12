@@ -12,7 +12,7 @@
 
     <modules>
         <module>jnox-ui</module>
-        <module>client</module>
+        <module>sandbox</module>
     </modules>
 
     <properties>

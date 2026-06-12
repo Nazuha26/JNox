@@ -10,7 +10,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.RoundRectangle2D;
 
-public class CaptionButton extends JButton {
+class CaptionButton extends JButton {
 
     public enum CaptionButtonType {
         MINIMIZE, MAXIMIZE, CLOSE
@@ -29,7 +29,7 @@ public class CaptionButton extends JButton {
     private static final Color MAXIMIZE_COLOR = new Color(NoxTheme.WARNING.getRed(), NoxTheme.WARNING.getGreen(), NoxTheme.WARNING.getBlue(), caption_alpha);
     private static final Color CLOSE_COLOR = new Color(NoxTheme.ERROR.getRed(), NoxTheme.ERROR.getGreen(), NoxTheme.ERROR.getBlue(), caption_alpha);
 
-    public CaptionButton(CaptionButtonType buttonType) {
+    CaptionButton(CaptionButtonType buttonType) {
         this.buttonType = buttonType;
         loadIcons();
 

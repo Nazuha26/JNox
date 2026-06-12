@@ -8,12 +8,12 @@ import java.awt.event.WindowEvent;
 public class NoxNativeDialog extends JDialog {
 
     private final NoxWindowDelegate delegate;
-    @Getter private final CaptionButton closeButton = new CaptionButton(CaptionButton.CaptionButtonType.CLOSE);
 
-    public NoxNativeDialog(Frame owner, String title, boolean modal) {
+    NoxNativeDialog(Frame owner, String title, boolean modal) {
         super(owner, title, modal);
         this.delegate = new NoxWindowDelegate(this);
 
+        CaptionButton closeButton = new CaptionButton(CaptionButton.CaptionButtonType.CLOSE);
         closeButton.addActionListener(e -> {
             if (delegate.isNativeInstalled()) delegate.getNativeLib().closeWindow(this);
             else dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));

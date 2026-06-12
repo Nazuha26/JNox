@@ -8,7 +8,7 @@ import javax.swing.plaf.basic.BasicScrollBarUI;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 
-public class NoxScrollBarUI extends BasicScrollBarUI {
+class NoxScrollBarUI extends BasicScrollBarUI {
 
     private boolean isTrackHover = false;
     private boolean isTrackPressed = false;

@@ -103,7 +103,11 @@ public class NoxOptionPane {
             Window window = parentComponent == null ? JOptionPane.getRootFrame() : SwingUtilities.getWindowAncestor(parentComponent);
             Frame owner = window instanceof Frame ? (Frame) window : null;
 
-            dialog = new NoxNativeDialog(owner, title, true);
+            dialog = Nox.dialog(owner, title)
+                    .modal(true)
+                    .resizable(false)
+                    .defaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE)
+                    .build();
             dialog.setResizable(false);
 
             JPanel body = dialog.getBody();
@@ -131,7 +135,9 @@ public class NoxOptionPane {
             messageArea.setOpaque(true);
 
             // Wrap in JScrollPane
-            NoxScrollPane scrollPane = new NoxScrollPane(messageArea);
+            NoxScrollPane scrollPane = Nox.scrollPane()
+                    .view(messageArea)
+                    .build();
             scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
             body.add(scrollPane, BorderLayout.CENTER);
 
@@ -184,13 +190,13 @@ public class NoxOptionPane {
         }
 
         private NoxButton createButton(String text, OptionResult actionResult) {
-            NoxButton btn = new NoxButton(text);
-            btn.setPreferredSize(new Dimension(100, 32));
-            btn.addActionListener(e -> {
-                this.result = actionResult;
-                dialog.dispose();
-            });
-            return btn;
+            return Nox.button(text)
+                    .preferredSize(100, 32)
+                    .onClick(e -> {
+                        this.result = actionResult;
+                        dialog.dispose();
+                    })
+                    .build();
         }
 
         /**

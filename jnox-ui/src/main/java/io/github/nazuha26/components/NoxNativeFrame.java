@@ -1,6 +1,7 @@
 package io.github.nazuha26.components;
 
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
@@ -12,29 +13,70 @@ public class NoxNativeFrame extends JFrame {
 
     private final NoxWindowDelegate delegate;
 
-    @Getter private final CaptionButton minimizeButton = new CaptionButton(CaptionButton.CaptionButtonType.MINIMIZE);
-    @Getter private final CaptionButton maximizeButton = new CaptionButton(CaptionButton.CaptionButtonType.MAXIMIZE);
-    @Getter private final CaptionButton closeButton = new CaptionButton(CaptionButton.CaptionButtonType.CLOSE);
+    private final CaptionButton minimizeButton = new CaptionButton(CaptionButton.CaptionButtonType.MINIMIZE);
+    private final CaptionButton maximizeButton = new CaptionButton(CaptionButton.CaptionButtonType.MAXIMIZE);
+    private final CaptionButton closeButton = new CaptionButton(CaptionButton.CaptionButtonType.CLOSE);
 
-    public NoxNativeFrame(String title) {
+    @Getter private boolean maximizable;
+    @Getter private boolean minimizable;
+    @Getter private boolean closable;
+
+    NoxNativeFrame(String title) {
+        this(title, NoxFrameOptions.defaults());
+    }
+
+    NoxNativeFrame(String title, NoxFrameOptions options) {
         super(title);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+
+        if (options == null) {
+            options = NoxFrameOptions.defaults();
+        }
+
+        this.maximizable = options.maximizable();
+        this.minimizable = options.minimizable();
+        this.closable = options.closable();
+
+        setResizable(options.resizable());
+        setMinimumSize(options.minimumSize());
 
         this.delegate = new NoxWindowDelegate(this);
 
         minimizeButton.addActionListener(e -> {
-            if (delegate.isNativeInstalled()) delegate.getNativeLib().minimizeWindow(this);
-            else setState(Frame.ICONIFIED);
+            if (!minimizable) {
+                return;
+            }
+
+            if (delegate.isNativeInstalled()) {
+                delegate.getNativeLib().minimizeWindow(this);
+            } else {
+                setState(Frame.ICONIFIED);
+            }
         });
 
-        maximizeButton.addActionListener(e -> toggleMaximizeRestore());
+        maximizeButton.addActionListener(e -> {
+            if (maximizable) {
+                toggleMaximizeRestore();
+            }
+        });
 
         closeButton.addActionListener(e -> {
-            if (delegate.isNativeInstalled()) delegate.getNativeLib().closeWindow(this);
-            else dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+            if (!closable) {
+                return;
+            }
+
+            if (delegate.isNativeInstalled()) {
+                delegate.getNativeLib().closeWindow(this);
+            } else {
+                dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+            }
         });
 
         delegate.install(title, this::toggleMaximizeRestore, minimizeButton, maximizeButton, closeButton);
+
+        setMinimizable(minimizable);
+        setMaximizable(maximizable);
+        setClosable(closable);
     }
 
     @Override
@@ -55,11 +97,42 @@ public class NoxNativeFrame extends JFrame {
         if (delegate != null) delegate.setTitle(title);
     }
 
+    public void setMaximizable(boolean maximizable) {
+        this.maximizable = maximizable;
+        if (maximizeButton != null) {
+            maximizeButton.setVisible(maximizable);
+        }
+        if (delegate != null) {
+            delegate.updateCaptionButtonsWidth();
+        }
+    }
+
+    public void setMinimizable(boolean minimizable) {
+        this.minimizable = minimizable;
+        if (minimizeButton != null) {
+            minimizeButton.setVisible(minimizable);
+        }
+        if (delegate != null) {
+            delegate.updateCaptionButtonsWidth();
+        }
+    }
+
+    public void setClosable(boolean closable) {
+        this.closable = closable;
+        if (closeButton != null) {
+            closeButton.setVisible(closable);
+        }
+        if (delegate != null) {
+            delegate.updateCaptionButtonsWidth();
+        }
+    }
+
     @Override
     public void setResizable(boolean resizable) {
         super.setResizable(resizable);
-        if (maximizeButton != null) maximizeButton.setVisible(resizable);
-        if (delegate != null) delegate.updateCaptionButtonsWidth();
+        if (delegate != null) {
+            delegate.updateCaptionButtonsWidth();
+        }
     }
 
     private boolean isMaximized() {
@@ -67,9 +140,16 @@ public class NoxNativeFrame extends JFrame {
     }
 
     private void toggleMaximizeRestore() {
+        if (!maximizable) {
+            return;
+        }
+
         if (delegate.isNativeInstalled()) {
-            if (isMaximized()) delegate.getNativeLib().restoreWindow(this);
-            else delegate.getNativeLib().maximizeWindow(this);
+            if (isMaximized()) {
+                delegate.getNativeLib().restoreWindow(this);
+            } else {
+                delegate.getNativeLib().maximizeWindow(this);
+            }
         } else {
             setExtendedState(isMaximized() ? Frame.NORMAL : Frame.MAXIMIZED_BOTH);
         }

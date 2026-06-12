@@ -10,7 +10,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class NoxWindowDelegate {
+class NoxWindowDelegate {
 
     public static final int TITLE_BAR_HEIGHT = 32;
     public static final int TITLE_BAR_LEFT_INSET = 12;
@@ -29,7 +29,7 @@ public class NoxWindowDelegate {
     private Point fallbackDragStartScreen;
     private Point fallbackWindowStart;
 
-    public NoxWindowDelegate(Window window) {
+    NoxWindowDelegate(Window window) {
         this.window = window;
     }
 
@@ -135,7 +135,13 @@ public class NoxWindowDelegate {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(e) && !OsUtils.isWindows()) {
-                    if (onDoubleClick != null) onDoubleClick.run();
+                    if (window instanceof NoxNativeFrame frame && !frame.isMaximizable()) {
+                        return;
+                    }
+
+                    if (onDoubleClick != null) {
+                        onDoubleClick.run();
+                    }
                 }
             }
         };
@@ -169,7 +175,21 @@ public class NoxWindowDelegate {
         nativeLib.configureWindow(window, TITLE_BAR_HEIGHT, captionWidth, isWindowResizable(), isWindowMaximizable());
         nativeLib.setBackgroundColor(window, NoxTheme.BG_PRIMARY.getRed(), NoxTheme.BG_PRIMARY.getGreen(), NoxTheme.BG_PRIMARY.getBlue());
         nativeLib.setBorderColor(window, NoxTheme.ACCENT_PRIMARY.getRed(), NoxTheme.ACCENT_PRIMARY.getGreen(), NoxTheme.ACCENT_PRIMARY.getBlue());
-        nativeLib.setMinSize(window, captionWidth + TITLE_BAR_LEFT_INSET + 128, TITLE_BAR_HEIGHT);
+
+        Dimension minimumSize = window.getMinimumSize();
+
+        int minWidth = Math.max(
+                minimumSize.width,
+                captionWidth + TITLE_BAR_LEFT_INSET + 128
+        );
+
+        int minHeight = Math.max(
+                minimumSize.height,
+                TITLE_BAR_HEIGHT
+        );
+
+        nativeLib.setMinSize(window, minWidth, minHeight);
+
         nativeInstalled = true;
     }
 
@@ -180,7 +200,10 @@ public class NoxWindowDelegate {
     }
 
     private boolean isWindowMaximizable() {
-        if (window instanceof Frame) return ((Frame) window).isResizable();
+        if (window instanceof NoxNativeFrame frame) {
+            return frame.isMaximizable();
+        }
+
         return false;
     }
 }

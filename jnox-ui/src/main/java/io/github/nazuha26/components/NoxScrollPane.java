@@ -7,7 +7,7 @@ import java.awt.*;
 
 public class NoxScrollPane extends JScrollPane {
 
-    public NoxScrollPane(Component view) {
+    NoxScrollPane(Component view) {
         super(view);
 
         setOpaque(false);

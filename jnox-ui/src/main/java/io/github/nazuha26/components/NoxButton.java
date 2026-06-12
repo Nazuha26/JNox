@@ -11,7 +11,7 @@ import java.awt.geom.RoundRectangle2D;
 
 public class NoxButton extends JButton {
 
-    public NoxButton(String text) {
+    NoxButton(String text) {
         super(text);
 
         setContentAreaFilled(false);
