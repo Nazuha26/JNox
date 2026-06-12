@@ -33,7 +33,7 @@ public final class NoxBorders {
                 title == null ? "" : title,
                 TitledBorder.LEADING,
                 TitledBorder.TOP,
-                NoxTheme.FONT_BOLD.deriveFont(15f),
+                NoxTheme.FONT_BOLD,
                 NoxTheme.TEXT_PRIMARY
         );
 

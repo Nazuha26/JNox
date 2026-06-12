@@ -14,9 +14,33 @@ import io.github.nazuha26.components.NoxTextField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollBar;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.JTextArea;
+import javax.swing.WindowConstants;
+import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
-import java.awt.*;
+import javax.swing.border.TitledBorder;
+import javax.swing.text.DefaultCaret;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Frame;
+import java.awt.GridLayout;
+import java.awt.event.ActionListener;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -31,10 +55,14 @@ public class Main {
 
     private static NoxNativeFrame mainFrame;
     private static JLabel statusLabel;
+
     private static NoxLogPane logPane;
     private static int logCounter;
     private static boolean logLineWrap = true;
     private static boolean logAutoScroll = true;
+    private static NoxButton logWrapButton;
+    private static NoxButton logAutoScrollButton;
+    private static JLabel logStateLabel;
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
@@ -90,6 +118,7 @@ public class Main {
                 .build();
         scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.getVerticalScrollBar().setUnitIncrement(22);
+
         body.add(scrollPane, BorderLayout.CENTER);
 
         statusLabel = createLabel("Ready", NoxTheme.FONT_PLAIN_SMALL);
@@ -103,7 +132,7 @@ public class Main {
 
         JLabel title = createLabel("Nox UI Sandbox Overview", NoxTheme.FONT_BOLD.deriveFont(18f));
         JLabel subtitle = createLabel(
-                "<html>One window that demonstrates the public builders, native window wrappers, inputs, log pane, borders, scrollbars and option dialogs.</html>",
+                "<html>Interactive overview for frames, dialogs, buttons, inputs, option panes, log pane, scroll pane, borders and theme constants.</html>",
                 NoxTheme.FONT_PLAIN
         );
 
@@ -127,21 +156,24 @@ public class Main {
 
     private static JPanel createOverviewSection() {
         JPanel panel = createRowsPanel();
-        panel.add(createInfoLabel("Coverage map for the sandbox window. Green labels mean the component has an interactive example below."));
+
+        panel.add(createInfoLabel(
+                "Coverage map. Every item below has a small interactive example in this sandbox window."
+        ));
 
         JPanel grid = new JPanel(new GridLayout(0, 3, 8, 8));
         grid.setOpaque(false);
         grid.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        grid.add(createCoverageItem("Nox.frame / NoxNativeFrame", "window flags, title, variants", true));
-        grid.add(createCoverageItem("Nox.dialog / NoxNativeDialog", "modal, modeless, custom body", true));
-        grid.add(createCoverageItem("Nox.button", "text, size, default button, click", true));
-        grid.add(createCoverageItem("Nox.textField", "placeholder, columns, action, disabled", true));
-        grid.add(createCoverageItem("Nox.passwordField", "placeholder, echo char, action", true));
-        grid.add(createCoverageItem("Nox.optionPane", "messages and confirm results", true));
-        grid.add(createCoverageItem("Nox.logPane", "segments, styles, wrapping, trimming", true));
-        grid.add(createCoverageItem("Nox.scrollPane", "custom scrollbars and preferred size", true));
-        grid.add(createCoverageItem("NoxBorders / NoxTheme", "surface, titled, accent, palette", true));
+        grid.add(createCoverageItem("Nox.frame", "window title, flags, variants"));
+        grid.add(createCoverageItem("Nox.dialog", "modal, modeless, custom body"));
+        grid.add(createCoverageItem("Nox.button", "text, size, default button, click"));
+        grid.add(createCoverageItem("Nox.textField", "placeholder, action, disabled"));
+        grid.add(createCoverageItem("Nox.passwordField", "echo char, show/hide"));
+        grid.add(createCoverageItem("NoxOptionPane", "message and confirm dialogs"));
+        grid.add(createCoverageItem("Nox.logPane", "segments, styles, auto scroll"));
+        grid.add(createCoverageItem("Nox.scrollPane", "custom scrollbars"));
+        grid.add(createCoverageItem("NoxBorders", "surface, titled, accent"));
 
         panel.add(grid);
         return createSection("Overview", panel);
@@ -151,15 +183,16 @@ public class Main {
         JPanel panel = createRowsPanel();
 
         panel.add(createInfoLabel(
-                "Checks Nox.frame().title().size().minimumSize().resizable().maximizable().minimizable().closable().build()."
+                "Checks title(), size(), minimumSize(), resizable(), maximizable(), minimizable(), closable() and build()."
         ));
 
-        JPanel titleRow = createFlowPanel();
         NoxTextField titleField = Nox.textField(frame.getTitle())
                 .placeholder("Window title")
                 .preferredSize(330, 36)
                 .onAction(e -> applyMainFrameTitle(frame, (NoxTextField) e.getSource()))
                 .build();
+
+        JPanel titleRow = createFlowPanel();
         titleRow.add(createMutedLabel("Main frame title:"));
         titleRow.add(titleField);
         titleRow.add(createSmallButton("Apply", e -> applyMainFrameTitle(frame, titleField)));
@@ -187,21 +220,21 @@ public class Main {
             updateStatus("Main frame closable = " + frame.isClosable());
         });
 
-        JPanel toggles = createFlowPanel();
-        toggles.add(resizableBox);
-        toggles.add(maximizableBox);
-        toggles.add(minimizableBox);
-        toggles.add(closableBox);
-        panel.add(toggles);
+        JPanel flags = createFlowPanel();
+        flags.add(resizableBox);
+        flags.add(maximizableBox);
+        flags.add(minimizableBox);
+        flags.add(closableBox);
+        panel.add(flags);
 
-        JPanel frameTests = createFlowPanel();
-        frameTests.add(createButton("Default frame", e -> openFrameVariant("Default frame", true, true, true, true)));
-        frameTests.add(createButton("Fixed frame", e -> openFrameVariant("Fixed frame", false, true, true, true)));
-        frameTests.add(createButton("No maximize", e -> openFrameVariant("No maximize", true, false, true, true)));
-        frameTests.add(createButton("No minimize", e -> openFrameVariant("No minimize", true, true, false, true)));
-        frameTests.add(createButton("No close button", e -> openFrameVariant("No close button", true, true, true, false)));
-        frameTests.add(createButton("All disabled", e -> openFrameVariant("All disabled", false, false, false, false)));
-        panel.add(frameTests);
+        JPanel variants = createFlowPanel();
+        variants.add(createButton("Default frame", e -> openFrameVariant("Default frame", true, true, true, true)));
+        variants.add(createButton("Fixed frame", e -> openFrameVariant("Fixed frame", false, true, true, true)));
+        variants.add(createButton("No maximize", e -> openFrameVariant("No maximize", true, false, true, true)));
+        variants.add(createButton("No minimize", e -> openFrameVariant("No minimize", true, true, false, true)));
+        variants.add(createButton("No close button", e -> openFrameVariant("No close button", true, true, true, false)));
+        variants.add(createButton("All disabled", e -> openFrameVariant("All disabled", false, false, false, false)));
+        panel.add(variants);
 
         return createSection("NoxFrameBuilder / NoxNativeFrame", panel);
     }
@@ -247,19 +280,20 @@ public class Main {
                 .onClick(e -> openDialogVariant(frame, "Opened by NoxButtonBuilder", true, true, false))
                 .build();
 
-        JPanel row = createFlowPanel();
-        row.add(simpleButton);
-        row.add(defaultButton);
-        row.add(dialogButton);
-        panel.add(row);
+        JPanel buttons = createFlowPanel();
+        buttons.add(simpleButton);
+        buttons.add(defaultButton);
+        buttons.add(dialogButton);
+        panel.add(buttons);
 
         NoxTextField focusField = Nox.textField()
                 .placeholder("Focus here and press Enter to trigger the default button")
                 .preferredSize(520, 36)
                 .build();
-        JPanel hintRow = createFlowPanel();
-        hintRow.add(focusField);
-        panel.add(hintRow);
+
+        JPanel hint = createFlowPanel();
+        hint.add(focusField);
+        panel.add(hint);
 
         return createSection("NoxButtonBuilder", panel);
     }
@@ -271,7 +305,7 @@ public class Main {
                 "Checks Nox.textField() and Nox.passwordField(): text(), placeholder(), columns(), preferredSize(), editable(), enabled(), echoChar(), onAction() and build()."
         ));
 
-        NoxTextField nameField = Nox.textField()
+        NoxTextField editableField = Nox.textField()
                 .placeholder("Name or search value")
                 .columns(24)
                 .preferredSize(280, 36)
@@ -289,7 +323,7 @@ public class Main {
                 .build();
 
         JPanel textFields = createFlowPanel();
-        textFields.add(labeled("Editable", nameField));
+        textFields.add(labeled("Editable", editableField));
         textFields.add(labeled("Read-only", readOnlyField));
         textFields.add(labeled("Disabled", disabledField));
         panel.add(textFields);
@@ -311,16 +345,16 @@ public class Main {
         JCheckBox showPassword = createCheckBox("show password", false);
         showPassword.addActionListener(e -> {
             passwordField.setEchoChar(showPassword.isSelected() ? (char) 0 : '•');
-            updateStatus("Password echoChar visible = " + showPassword.isSelected());
+            updateStatus("Password visible = " + showPassword.isSelected());
         });
 
-        JPanel passwordRow = createFlowPanel();
-        passwordRow.add(labeled("Password", passwordField));
-        passwordRow.add(labeled("Disabled password", disabledPassword));
-        passwordRow.add(showPassword);
-        passwordRow.add(createSmallButton("Check length", e -> updatePasswordStatus(passwordField)));
-        passwordRow.add(createSmallButton("Open form", e -> openFormDialog(frame)));
-        panel.add(passwordRow);
+        JPanel passwords = createFlowPanel();
+        passwords.add(labeled("Password", passwordField));
+        passwords.add(labeled("Disabled password", disabledPassword));
+        passwords.add(showPassword);
+        passwords.add(createSmallButton("Check length", e -> updatePasswordStatus(passwordField)));
+        passwords.add(createSmallButton("Open form", e -> openFormDialog(frame)));
+        panel.add(passwords);
 
         return createSection("NoxTextFieldBuilder / NoxPasswordFieldBuilder", panel);
     }
@@ -330,20 +364,20 @@ public class Main {
 
         panel.add(createInfoLabel("Checks public NoxOptionPane API with all message types and option types."));
 
-        JPanel messageTypes = createFlowPanel();
-        messageTypes.add(createSmallButton("ERROR", e -> showMessage(frame, NoxOptionPane.MessageType.ERROR)));
-        messageTypes.add(createSmallButton("INFORMATION", e -> showMessage(frame, NoxOptionPane.MessageType.INFORMATION)));
-        messageTypes.add(createSmallButton("WARNING", e -> showMessage(frame, NoxOptionPane.MessageType.WARNING)));
-        messageTypes.add(createSmallButton("QUESTION", e -> showMessage(frame, NoxOptionPane.MessageType.QUESTION)));
-        messageTypes.add(createSmallButton("PLAIN", e -> showMessage(frame, NoxOptionPane.MessageType.PLAIN)));
-        panel.add(messageTypes);
+        JPanel messages = createFlowPanel();
+        messages.add(createSmallButton("ERROR", e -> showMessage(frame, NoxOptionPane.MessageType.ERROR)));
+        messages.add(createSmallButton("INFORMATION", e -> showMessage(frame, NoxOptionPane.MessageType.INFORMATION)));
+        messages.add(createSmallButton("WARNING", e -> showMessage(frame, NoxOptionPane.MessageType.WARNING)));
+        messages.add(createSmallButton("QUESTION", e -> showMessage(frame, NoxOptionPane.MessageType.QUESTION)));
+        messages.add(createSmallButton("PLAIN", e -> showMessage(frame, NoxOptionPane.MessageType.PLAIN)));
+        panel.add(messages);
 
-        JPanel optionTypes = createFlowPanel();
-        optionTypes.add(createSmallButton("DEFAULT", e -> showConfirm(frame, NoxOptionPane.OptionType.DEFAULT, NoxOptionPane.MessageType.PLAIN)));
-        optionTypes.add(createSmallButton("YES_NO", e -> showConfirm(frame, NoxOptionPane.OptionType.YES_NO, NoxOptionPane.MessageType.QUESTION)));
-        optionTypes.add(createSmallButton("YES_NO_CANCEL", e -> showConfirm(frame, NoxOptionPane.OptionType.YES_NO_CANCEL, NoxOptionPane.MessageType.WARNING)));
-        optionTypes.add(createSmallButton("OK_CANCEL", e -> showConfirm(frame, NoxOptionPane.OptionType.OK_CANCEL, NoxOptionPane.MessageType.INFORMATION)));
-        panel.add(optionTypes);
+        JPanel confirms = createFlowPanel();
+        confirms.add(createSmallButton("DEFAULT", e -> showConfirm(frame, NoxOptionPane.OptionType.DEFAULT, NoxOptionPane.MessageType.PLAIN)));
+        confirms.add(createSmallButton("YES_NO", e -> showConfirm(frame, NoxOptionPane.OptionType.YES_NO, NoxOptionPane.MessageType.QUESTION)));
+        confirms.add(createSmallButton("YES_NO_CANCEL", e -> showConfirm(frame, NoxOptionPane.OptionType.YES_NO_CANCEL, NoxOptionPane.MessageType.WARNING)));
+        confirms.add(createSmallButton("OK_CANCEL", e -> showConfirm(frame, NoxOptionPane.OptionType.OK_CANCEL, NoxOptionPane.MessageType.INFORMATION)));
+        panel.add(confirms);
 
         return createSection("NoxOptionPane", panel);
     }
@@ -352,7 +386,7 @@ public class Main {
         JPanel panel = createRowsPanel();
 
         panel.add(createInfoLabel(
-                "Checks Nox.logPane(), NoxLogPaneBuilder, append(), appendLine(), clear(), maxLines, autoScroll, lineWrap, NoxLogSegment and NoxLogStyle."
+                "Checks Nox.logPane(), NoxLogPaneBuilder, appendLine(), clear(), maxLines, autoScroll, lineWrap, NoxLogSegment and NoxLogStyle."
         ));
 
         logPane = Nox.logPane()
@@ -362,7 +396,7 @@ public class Main {
                 .maxLines(80)
                 .initialLine(
                         NoxLogSegment.accent("NoxLogPane ready "),
-                        NoxLogSegment.muted("maxLines=80, autoScroll=true, lineWrap=true")
+                        NoxLogSegment.muted("maxLines=80, autoScroll=" + logAutoScroll + ", lineWrap=" + logLineWrap)
                 )
                 .initialLine(
                         NoxLogSegment.success("success "),
@@ -373,26 +407,38 @@ public class Main {
                 )
                 .build();
 
+        applyLogAutoScrollState(false);
+
+        logStateLabel = createMutedLabel(logStateText());
+
         JPanel controls = createFlowPanel();
         controls.add(createSmallButton("Add normal", e -> appendNormalLogLine()));
         controls.add(createSmallButton("Add styled", e -> appendStyledLogLine()));
         controls.add(createSmallButton("Add 100 lines", e -> appendManyLogLines()));
-        controls.add(createSmallButton("Toggle wrap", e -> toggleLogWrap()));
-        controls.add(createSmallButton("Toggle scroll", e -> toggleLogAutoScroll()));
+
+        logWrapButton = createSmallButton(logWrapButtonText(), e -> toggleLogWrap());
+        logAutoScrollButton = createSmallButton(logAutoScrollButtonText(), e -> toggleLogAutoScroll());
+
+        controls.add(logWrapButton);
+        controls.add(logAutoScrollButton);
         controls.add(createSmallButton("Clear", e -> {
             logPane.clear();
             updateStatus("Log pane cleared");
         }));
 
         panel.add(controls);
+        panel.add(logStateLabel);
         panel.add(logPane);
+
         return createSection("NoxLogPane / NoxLogSegment / NoxLogStyle", panel);
     }
 
     private static JPanel createScrollPaneBuilderSection() {
         JPanel panel = createRowsPanel();
 
-        panel.add(createInfoLabel("Checks Nox.scrollPane().view().preferredSize().build() and custom horizontal/vertical scrollbars."));
+        panel.add(createInfoLabel(
+                "Checks Nox.scrollPane().view().preferredSize().build() and custom horizontal/vertical scrollbars."
+        ));
 
         JTextArea textArea = new JTextArea(createLongScrollText());
         textArea.setFont(NoxTheme.FONT_PLAIN);
@@ -414,7 +460,9 @@ public class Main {
     private static JPanel createBordersAndThemeSection() {
         JPanel panel = createRowsPanel();
 
-        panel.add(createInfoLabel("Checks NoxBorders.surface(), NoxBorders.titled(), NoxBorders.titledAccent() and visible NoxTheme palette/font constants."));
+        panel.add(createInfoLabel(
+                "Checks NoxBorders.surface(), NoxBorders.titled(), NoxBorders.titledAccent() and visible NoxTheme palette/font constants."
+        ));
 
         JPanel borderSamples = createFlowPanel();
         borderSamples.add(createBorderSample("surface()", NoxBorders.surface()));
@@ -442,7 +490,13 @@ public class Main {
         return createSection("NoxBorders / NoxTheme", panel);
     }
 
-    private static void openFrameVariant(String title, boolean resizable, boolean maximizable, boolean minimizable, boolean closable) {
+    private static void openFrameVariant(
+            String title,
+            boolean resizable,
+            boolean maximizable,
+            boolean minimizable,
+            boolean closable
+    ) {
         NoxNativeFrame frame = Nox.frame()
                 .title(title)
                 .size(500, 300)
@@ -479,11 +533,18 @@ public class Main {
 
         body.add(info, BorderLayout.CENTER);
         body.add(wrapCenter(closeButton), BorderLayout.SOUTH);
+
         frame.setVisible(true);
         updateStatus("Opened frame variant: " + title);
     }
 
-    private static void openDialogVariant(NoxNativeFrame owner, String title, boolean modal, boolean resizable, boolean scrollable) {
+    private static void openDialogVariant(
+            NoxNativeFrame owner,
+            String title,
+            boolean modal,
+            boolean resizable,
+            boolean scrollable
+    ) {
         NoxNativeDialog dialog = Nox.dialog(owner)
                 .title(title)
                 .modal(modal)
@@ -512,6 +573,7 @@ public class Main {
             NoxScrollPane scrollPane = Nox.scrollPane()
                     .view(textArea)
                     .build();
+
             body.add(scrollPane, BorderLayout.CENTER);
         } else {
             JLabel message = createLabel(
@@ -521,6 +583,7 @@ public class Main {
                             "This dialog was created with NoxDialogBuilder.</html>",
                     NoxTheme.FONT_PLAIN
             );
+
             body.add(message, BorderLayout.CENTER);
         }
 
@@ -531,6 +594,7 @@ public class Main {
                 .build();
 
         body.add(wrapCenter(closeButton), BorderLayout.SOUTH);
+
         dialog.setVisible(true);
         updateStatus("Opened dialog variant: " + title);
     }
@@ -550,16 +614,18 @@ public class Main {
         body.setBorder(new EmptyBorder(20, 20, 20, 20));
         body.setBackground(NoxTheme.BG_PRIMARY);
 
-        JPanel form = createRowsPanel();
         NoxTextField login = Nox.textField()
                 .placeholder("Login")
                 .preferredSize(320, 36)
                 .build();
+
         NoxPasswordField password = Nox.passwordField()
                 .placeholder("Password")
                 .preferredSize(320, 36)
                 .echoChar('•')
                 .build();
+
+        JPanel form = createRowsPanel();
         form.add(labeled("Login", login));
         form.add(Box.createVerticalStrut(8));
         form.add(labeled("Password", password));
@@ -569,14 +635,17 @@ public class Main {
                 .preferredSize(150, 34)
                 .defaultButton(dialog.getRootPane())
                 .onClick(e -> {
-                    updateStatus("Form submitted: login=" + login.getText() + ", passwordLength=" + password.getPassword().length);
-                    Arrays.fill(password.getPassword(), '\0');
+                    char[] passwordChars = password.getPassword();
+                    updateStatus("Form submitted: login=" + login.getText() + ", passwordLength=" + passwordChars.length);
+                    Arrays.fill(passwordChars, '\0');
                     dialog.dispose();
                 })
                 .build());
         actions.add(createSmallButton("Cancel", e -> dialog.dispose()));
 
-        body.add(createInfoLabel("This custom modal dialog uses NoxTextField, NoxPasswordField and NoxButton inside NoxNativeDialog."), BorderLayout.NORTH);
+        body.add(createInfoLabel(
+                "This custom modal dialog uses NoxTextField, NoxPasswordField and NoxButton inside NoxNativeDialog."
+        ), BorderLayout.NORTH);
         body.add(form, BorderLayout.CENTER);
         body.add(actions, BorderLayout.SOUTH);
 
@@ -590,10 +659,15 @@ public class Main {
                 "Message Test: " + messageType,
                 messageType
         );
+
         updateStatus("Shown message dialog: " + messageType);
     }
 
-    private static void showConfirm(Component parent, NoxOptionPane.OptionType optionType, NoxOptionPane.MessageType messageType) {
+    private static void showConfirm(
+            Component parent,
+            NoxOptionPane.OptionType optionType,
+            NoxOptionPane.MessageType messageType
+    ) {
         NoxOptionPane.OptionResult result = NoxOptionPane.showConfirmDialog(
                 parent,
                 "Select one option to test result mapping.",
@@ -607,6 +681,7 @@ public class Main {
 
     private static void applyMainFrameTitle(NoxNativeFrame frame, NoxTextField titleField) {
         String title = titleField.getText().trim();
+
         if (title.isEmpty()) {
             title = "Nox UI Sandbox Overview";
             titleField.setText(title);
@@ -624,55 +699,135 @@ public class Main {
 
     private static void appendNormalLogLine() {
         logCounter++;
-        logPane.appendLine("[" + now() + "] normal log line #" + logCounter + " | textLength=" + logPane.getTextLength());
-        updateStatus("Added normal log line #" + logCounter);
+
+        appendToLogKeepingUserScroll(() -> logPane.appendLine(
+                "[" + now() + "] normal log line #" + logCounter + " | textLength=" + logPane.getTextLength()
+        ));
+
+        updateStatus("Added normal log line #" + logCounter + " | autoScroll=" + logAutoScroll);
     }
 
     private static void appendStyledLogLine() {
         logCounter++;
-        logPane.appendLine(
+
+        appendToLogKeepingUserScroll(() -> logPane.appendLine(
                 NoxLogSegment.muted("[" + now() + "] "),
                 NoxLogSegment.accent("EVENT "),
                 NoxLogSegment.success("success "),
                 NoxLogSegment.warning("warning "),
                 NoxLogSegment.error("error "),
                 NoxLogSegment.muted(" styled #" + logCounter)
-        );
-        updateStatus("Added styled log line #" + logCounter);
+        ));
+
+        updateStatus("Added styled log line #" + logCounter + " | autoScroll=" + logAutoScroll);
     }
 
     private static void appendManyLogLines() {
-        for (int i = 0; i < 100; i++) {
-            logCounter++;
-            logPane.appendLine(
-                    NoxLogSegment.muted("[" + now() + "] "),
-                    NoxLogSegment.of("bulk line #" + logCounter + " "),
-                    i % 3 == 0 ? NoxLogSegment.success("SUCCESS") : NoxLogSegment.accent("INFO")
-            );
-        }
-        updateStatus("Added 100 lines. maxLines should keep only the latest 80 lines.");
+        appendToLogKeepingUserScroll(() -> {
+            for (int i = 0; i < 100; i++) {
+                logCounter++;
+
+                logPane.appendLine(
+                        NoxLogSegment.muted("[" + now() + "] "),
+                        NoxLogSegment.of("bulk line #" + logCounter + " "),
+                        i % 3 == 0 ? NoxLogSegment.success("SUCCESS") : NoxLogSegment.accent("INFO")
+                );
+            }
+        });
+
+        updateStatus("Added 100 lines. maxLines should keep only the latest 80 lines. autoScroll=" + logAutoScroll);
     }
 
     private static void toggleLogWrap() {
         logLineWrap = !logLineWrap;
         logPane.setLineWrap(logLineWrap);
+        updateLogControlsState();
         updateStatus("Log lineWrap = " + logLineWrap);
     }
 
     private static void toggleLogAutoScroll() {
         logAutoScroll = !logAutoScroll;
-        logPane.setAutoScroll(logAutoScroll);
+        applyLogAutoScrollState(logAutoScroll);
+        updateLogControlsState();
         updateStatus("Log autoScroll = " + logAutoScroll);
     }
 
-    private static NoxButton createButton(String text, java.awt.event.ActionListener actionListener) {
+    private static void appendToLogKeepingUserScroll(Runnable appendAction) {
+        if (logPane == null || appendAction == null) {
+            return;
+        }
+
+        if (!SwingUtilities.isEventDispatchThread()) {
+            SwingUtilities.invokeLater(() -> appendToLogKeepingUserScroll(appendAction));
+            return;
+        }
+
+        if (logAutoScroll) {
+            appendAction.run();
+            return;
+        }
+
+        JScrollBar verticalBar = logPane.getVerticalScrollBar();
+        int oldValue = verticalBar.getValue();
+
+        appendAction.run();
+
+        SwingUtilities.invokeLater(() -> {
+            int maxAllowedValue = Math.max(0, verticalBar.getMaximum() - verticalBar.getModel().getExtent());
+            verticalBar.setValue(Math.min(oldValue, maxAllowedValue));
+        });
+    }
+
+    private static void applyLogAutoScrollState(boolean scrollToBottom) {
+        if (logPane == null) {
+            return;
+        }
+
+        logPane.setAutoScroll(logAutoScroll);
+
+        if (logPane.getTextPane().getCaret() instanceof DefaultCaret caret) {
+            caret.setUpdatePolicy(logAutoScroll ? DefaultCaret.ALWAYS_UPDATE : DefaultCaret.NEVER_UPDATE);
+        }
+
+        if (scrollToBottom && logAutoScroll) {
+            logPane.getTextPane().setCaretPosition(logPane.getTextLength());
+        }
+    }
+
+    private static void updateLogControlsState() {
+        if (logWrapButton != null) {
+            logWrapButton.setText(logWrapButtonText());
+        }
+
+        if (logAutoScrollButton != null) {
+            logAutoScrollButton.setText(logAutoScrollButtonText());
+        }
+
+        if (logStateLabel != null) {
+            logStateLabel.setText(logStateText());
+        }
+    }
+
+    private static String logWrapButtonText() {
+        return "Wrap: " + (logLineWrap ? "ON" : "OFF");
+    }
+
+    private static String logAutoScrollButtonText() {
+        return "Auto scroll: " + (logAutoScroll ? "ON" : "OFF");
+    }
+
+    private static String logStateText() {
+        return "Current LogPane state: maxLines=80, lineWrap=" + logLineWrap + ", autoScroll=" + logAutoScroll;
+    }
+
+    private static NoxButton createButton(String text, ActionListener actionListener) {
         return Nox.button(text)
                 .preferredSize(BUTTON_SIZE.width, BUTTON_SIZE.height)
                 .onClick(actionListener)
                 .build();
     }
 
-    private static NoxButton createSmallButton(String text, java.awt.event.ActionListener actionListener) {
+    private static NoxButton createSmallButton(String text, ActionListener actionListener) {
         return Nox.button(text)
                 .preferredSize(SMALL_BUTTON_SIZE.width, SMALL_BUTTON_SIZE.height)
                 .onClick(actionListener)
@@ -681,12 +836,28 @@ public class Main {
 
     private static JPanel createSection(String title, Component content) {
         JPanel section = new JPanel(new BorderLayout(0, 10));
-        section.setOpaque(true);
-        section.setBackground(NoxTheme.BG_SURFACE);
-        section.setBorder(NoxBorders.titledAccent(title));
+        section.setOpaque(false);
+        section.setBorder(withTitleFont14(NoxBorders.titledAccent(title)));
         section.setAlignmentX(Component.LEFT_ALIGNMENT);
         section.add(content, BorderLayout.CENTER);
         return section;
+    }
+
+    private static Border withTitleFont14(Border border) {
+        applyTitledBorderFont(border);
+        return border;
+    }
+
+    private static void applyTitledBorderFont(Border border) {
+        if (border instanceof TitledBorder titledBorder) {
+            titledBorder.setTitleFont(NoxTheme.FONT_BOLD.deriveFont(14f));
+            return;
+        }
+
+        if (border instanceof CompoundBorder compoundBorder) {
+            applyTitledBorderFont(compoundBorder.getOutsideBorder());
+            applyTitledBorderFont(compoundBorder.getInsideBorder());
+        }
     }
 
     private static JPanel createRowsPanel() {
@@ -715,8 +886,7 @@ public class Main {
         JPanel panel = new JPanel(new BorderLayout(0, 4));
         panel.setOpaque(false);
         panel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        JLabel label = createMutedLabel(title);
-        panel.add(label, BorderLayout.NORTH);
+        panel.add(createMutedLabel(title), BorderLayout.NORTH);
         panel.add(component, BorderLayout.CENTER);
         return panel;
     }
@@ -754,27 +924,27 @@ public class Main {
         return checkBox;
     }
 
-    private static JPanel createCoverageItem(String title, String description, boolean covered) {
+    private static JPanel createCoverageItem(String title, String description) {
         JPanel panel = new JPanel(new BorderLayout(0, 4));
         panel.setOpaque(true);
         panel.setBackground(NoxTheme.BG_PRIMARY);
         panel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(covered ? NoxTheme.SUCCESS : NoxTheme.WARNING),
+                BorderFactory.createLineBorder(NoxTheme.SUCCESS),
                 new EmptyBorder(8, 10, 8, 10)
         ));
 
         JLabel titleLabel = createLabel(title, NoxTheme.FONT_BOLD);
         JLabel descriptionLabel = createMutedLabel(description);
+
         panel.add(titleLabel, BorderLayout.NORTH);
         panel.add(descriptionLabel, BorderLayout.CENTER);
         return panel;
     }
 
-    private static JPanel createBorderSample(String text, javax.swing.border.Border border) {
+    private static JPanel createBorderSample(String text, Border border) {
         JPanel panel = new JPanel(new BorderLayout());
-        panel.setOpaque(true);
-        panel.setBackground(NoxTheme.BG_PRIMARY);
-        panel.setBorder(border);
+        panel.setOpaque(false);
+        panel.setBorder(withTitleFont14(border));
         panel.setPreferredSize(new Dimension(180, 72));
         panel.add(createMutedLabel(text), BorderLayout.CENTER);
         return panel;
@@ -809,6 +979,7 @@ public class Main {
 
         JLabel sample = createLabel("Aa 123", font);
         JLabel label = createMutedLabel(name);
+
         panel.add(sample, BorderLayout.CENTER);
         panel.add(label, BorderLayout.SOUTH);
         return panel;
@@ -844,6 +1015,7 @@ public class Main {
 
     private static String createLongScrollText() {
         StringBuilder sb = new StringBuilder();
+
         for (int i = 1; i <= 70; i++) {
             sb.append(i)
                     .append(". NoxScrollPane test line. ")
@@ -851,6 +1023,7 @@ public class Main {
                     .append("ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz-0123456789")
                     .append(System.lineSeparator());
         }
+
         return sb.toString();
     }
 }
