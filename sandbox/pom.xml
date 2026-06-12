@@ -7,7 +7,7 @@
     <parent>
         <groupId>io.github.nazuha26</groupId>
         <artifactId>jnox</artifactId>
-        <version>0.1.0</version>
+        <version>0.1.1</version>
     </parent>
 
     <artifactId>sandbox</artifactId>
