@@ -49,15 +49,15 @@ public record NoxLogSegment(
     }
 
     public NoxLogSegment bold() {
-        return new NoxLogSegment(text, style.bold());
+        return new NoxLogSegment(text, style.plainBold(true));
     }
 
     public NoxLogSegment italic() {
-        return new NoxLogSegment(text, style.italic());
+        return new NoxLogSegment(text, style.plainItalic(true));
     }
 
     public NoxLogSegment underline() {
-        return new NoxLogSegment(text, style.underline());
+        return new NoxLogSegment(text, style.plainUnderline(true));
     }
 
     public NoxLogSegment withStyle(NoxLogStyle style) {

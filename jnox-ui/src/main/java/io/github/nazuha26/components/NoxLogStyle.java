@@ -51,24 +51,12 @@ public record NoxLogStyle(
         return new NoxLogStyle(color, bold, italic, underline);
     }
 
-    public NoxLogStyle bold() {
-        return new NoxLogStyle(foreground, true, italic, underline);
-    }
-
     public NoxLogStyle plainBold(boolean bold) {
         return new NoxLogStyle(foreground, bold, italic, underline);
     }
 
-    public NoxLogStyle italic() {
-        return new NoxLogStyle(foreground, bold, true, underline);
-    }
-
     public NoxLogStyle plainItalic(boolean italic) {
         return new NoxLogStyle(foreground, bold, italic, underline);
-    }
-
-    public NoxLogStyle underline() {
-        return new NoxLogStyle(foreground, bold, italic, true);
     }
 
     public NoxLogStyle plainUnderline(boolean underline) {
