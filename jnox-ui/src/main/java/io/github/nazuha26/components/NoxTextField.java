@@ -68,7 +68,7 @@ public class NoxTextField extends JTextField {
 
         super.paintComponent(g);
 
-        if (getText().isEmpty() && placeholder != null && !placeholder.isBlank() && !hasFocus()) {
+        if (getText().isEmpty() && placeholder != null && !placeholder.isBlank()) {
             Graphics2D placeholderGraphics = (Graphics2D) g.create();
             placeholderGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             placeholderGraphics.setFont(getFont());

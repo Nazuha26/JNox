@@ -33,6 +33,7 @@ public class NoxPasswordField extends JPasswordField {
         setSelectedTextColor(NoxTheme.TEXT_PRIMARY);
         setDisabledTextColor(NoxTheme.TEXT_PRIMARY.darker());
         setBackground(NoxTheme.BG_SURFACE);
+        setEchoChar('*');
 
         addFocusListener(new FocusAdapter() {
             @Override
@@ -68,7 +69,7 @@ public class NoxPasswordField extends JPasswordField {
 
         super.paintComponent(g);
 
-        if (getPassword().length == 0 && placeholder != null && !placeholder.isBlank() && !hasFocus()) {
+        if (getPassword().length == 0 && placeholder != null && !placeholder.isBlank()) {
             Graphics2D placeholderGraphics = (Graphics2D) g.create();
             placeholderGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             placeholderGraphics.setFont(getFont());

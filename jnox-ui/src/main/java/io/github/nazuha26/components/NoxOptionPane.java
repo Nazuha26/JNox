@@ -42,6 +42,10 @@ public class NoxOptionPane {
         YES, NO, CANCEL, OK, CLOSED
     }
 
+    private static final int MIN_MESSAGE_WIDTH = 220;
+    private static final int MAX_MESSAGE_WIDTH = 560;
+    private static final int MAX_MESSAGE_HEIGHT = 240;
+
     /**
      * Shows a simple message dialog with a default title based on the message type.
      * @param parentComponent The parent component determining the frame in which the dialog is displayed. Can be null.
@@ -122,24 +126,7 @@ public class NoxOptionPane {
                 body.add(iconLabel, BorderLayout.WEST);
             }
 
-            // Text message
-            JTextArea messageArea = new JTextArea(message);
-            messageArea.setColumns(30);
-            messageArea.setFont(NoxTheme.FONT_PLAIN);
-            messageArea.setForeground(NoxTheme.TEXT_PRIMARY);
-            messageArea.setBackground(NoxTheme.BG_PRIMARY);
-            messageArea.setWrapStyleWord(true);
-            messageArea.setLineWrap(true);
-            messageArea.setEditable(false);
-            messageArea.setFocusable(false);
-            messageArea.setOpaque(true);
-
-            // Wrap in JScrollPane
-            NoxScrollPane scrollPane = Nox.scrollPane()
-                    .view(messageArea)
-                    .build();
-            scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-            body.add(scrollPane, BorderLayout.CENTER);
+            body.add(createMessageComponent(message), BorderLayout.CENTER);
 
             JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
             buttonPanel.setOpaque(false);
@@ -225,6 +212,60 @@ public class NoxOptionPane {
                     KeyboardFocusManager.getCurrentKeyboardFocusManager().focusPreviousComponent();
                 }
             });
+        }
+
+        private JComponent createMessageComponent(String message) {
+            JTextArea messageArea = createMessageArea(message);
+
+            Dimension naturalSize = messageArea.getPreferredSize();
+            boolean needsWrap = naturalSize.width > MAX_MESSAGE_WIDTH;
+
+            if (needsWrap) {
+                messageArea.setLineWrap(true);
+                messageArea.setWrapStyleWord(true);
+                messageArea.setSize(new Dimension(MAX_MESSAGE_WIDTH, Short.MAX_VALUE));
+            } else {
+                messageArea.setLineWrap(false);
+                messageArea.setWrapStyleWord(false);
+            }
+
+            Dimension contentSize = messageArea.getPreferredSize();
+
+            int width = Math.max(MIN_MESSAGE_WIDTH, Math.min(contentSize.width, MAX_MESSAGE_WIDTH));
+            int height = Math.min(contentSize.height, MAX_MESSAGE_HEIGHT);
+
+            boolean needsScroll = contentSize.height > MAX_MESSAGE_HEIGHT;
+
+            if (!needsScroll) {
+                messageArea.setPreferredSize(new Dimension(width, contentSize.height));
+                return messageArea;
+            }
+
+            messageArea.setPreferredSize(new Dimension(width, contentSize.height));
+
+            NoxScrollPane scrollPane = Nox.scrollPane()
+                    .view(messageArea)
+                    .preferredSize(width, height)
+                    .build();
+
+            scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+            scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+            scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+
+            return scrollPane;
+        }
+
+        private JTextArea createMessageArea(String message) {
+            JTextArea messageArea = new JTextArea(message == null ? "" : message);
+            messageArea.setFont(NoxTheme.FONT_PLAIN);
+            messageArea.setForeground(NoxTheme.TEXT_PRIMARY);
+            messageArea.setBackground(NoxTheme.BG_PRIMARY);
+            messageArea.setEditable(false);
+            messageArea.setFocusable(false);
+            messageArea.setOpaque(true);
+            messageArea.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
+
+            return messageArea;
         }
     }
 

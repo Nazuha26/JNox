@@ -332,19 +332,17 @@ public class Main {
                 .placeholder("Password")
                 .columns(20)
                 .preferredSize(280, 36)
-                .echoChar('•')
                 .onAction(e -> updatePasswordStatus((NoxPasswordField) e.getSource()))
                 .build();
 
         NoxPasswordField disabledPassword = Nox.passwordField("secret")
                 .preferredSize(220, 36)
-                .echoChar('•')
                 .enabled(false)
                 .build();
 
         JCheckBox showPassword = createCheckBox("show password", false);
         showPassword.addActionListener(e -> {
-            passwordField.setEchoChar(showPassword.isSelected() ? (char) 0 : '•');
+            passwordField.setEchoChar(showPassword.isSelected() ? (char) 0 : '*');
             updateStatus("Password visible = " + showPassword.isSelected());
         });
 
@@ -622,7 +620,6 @@ public class Main {
         NoxPasswordField password = Nox.passwordField()
                 .placeholder("Password")
                 .preferredSize(320, 36)
-                .echoChar('•')
                 .build();
 
         JPanel form = createRowsPanel();
@@ -1003,6 +1000,15 @@ public class Main {
 
     private static String randomLongMessage() {
         String[] messages = {
+                "Long text example. Long text example. Long text example. Long text example. Long text example. Long text example. Long text example. Long text example." +
+                        "Long text example. Long text example. Long text example. Long text example. Long text example. Long text example. Long text example. Long text example." +
+                        "Long text example. Long text example. Long text example. Long text example. Long text example. Long text example. Long text example. Long text example." +
+                        "Long text example. Long text example. Long text example. Long text example. Long text example. Long text example. Long text example. Long text example." +
+                        "Long text example. Long text example. Long text example. Long text example. Long text example. Long text example. Long text example. Long text example." +
+                        "Long text example. Long text example. Long text example. Long text example. Long text example. Long text example. Long text example. Long text example." +
+                        "Long text example. Long text example. Long text example. Long text example. Long text example. Long text example. Long text example. Long text example." +
+                        "Long text example. Long text example. Long text example. Long text example. Long text example. Long text example. Long text example. Long text example." +
+                        "Long text example. Long text example. Long text example. Long text example. Long text example. Long text example. Long text example. Long text example.",
                 "A critical error occurred while loading data. Please try again later.",
                 "The operation completed successfully. All changes have been saved.",
                 "You are using an outdated version of the program. An update is recommended.",
