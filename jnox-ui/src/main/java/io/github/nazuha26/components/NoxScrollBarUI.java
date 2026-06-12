@@ -3,7 +3,6 @@ package io.github.nazuha26.components;
 import io.github.nazuha26.NoxTheme;
 
 import javax.swing.*;
-import javax.swing.plaf.ComponentUI;
 import javax.swing.plaf.basic.BasicScrollBarUI;
 import java.awt.*;
 import java.awt.event.MouseEvent;

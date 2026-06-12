@@ -1,6 +1,5 @@
 package io.github.nazuha26.components;
 
-import lombok.Getter;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowEvent;
