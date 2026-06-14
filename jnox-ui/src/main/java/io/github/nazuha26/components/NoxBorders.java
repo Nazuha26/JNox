@@ -8,10 +8,10 @@ import javax.swing.border.TitledBorder;
 import java.awt.Color;
 
 public final class NoxBorders {
-    private static final int CONTENT_TOP = 8;
-    private static final int CONTENT_LEFT = 12;
-    private static final int CONTENT_BOTTOM = 12;
-    private static final int CONTENT_RIGHT = 12;
+    private static final int CONTENT_TOP = 4;
+    private static final int CONTENT_LEFT = 8;
+    private static final int CONTENT_BOTTOM = 8;
+    private static final int CONTENT_RIGHT = 8;
 
     private NoxBorders() { }
 
