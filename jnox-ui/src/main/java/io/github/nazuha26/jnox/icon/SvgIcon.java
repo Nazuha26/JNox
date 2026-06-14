@@ -1,4 +1,4 @@
-package io.github.nazuha26.utils;
+package io.github.nazuha26.jnox.icon;
 
 import com.github.weisj.jsvg.SVGDocument;
 import com.github.weisj.jsvg.attributes.ViewBox;

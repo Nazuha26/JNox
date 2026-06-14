@@ -1,7 +1,7 @@
-package io.github.nazuha26.components;
+package io.github.nazuha26.jnox.window;
 
-import io.github.nazuha26.NoxTheme;
-import io.github.nazuha26.utils.IconManager;
+import io.github.nazuha26.jnox.theme.NoxTheme;
+import io.github.nazuha26.jnox.icon.IconManager;
 import lombok.Getter;
 
 import javax.swing.*;

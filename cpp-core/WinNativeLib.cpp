@@ -240,7 +240,7 @@ namespace Utils
 
 
 extern "C" {
-    JNIEXPORT void JNICALL Java_io_github_nazuha26_WinNativeLib_hookWindow(JNIEnv* env, jobject, jobject component)
+    JNIEXPORT void JNICALL Java_io_github_nazuha26_jnox_platform_windows_WinNativeLib_hookWindow(JNIEnv* env, jobject, jobject component)
     {
         HWND hwnd = Utils::GetHwndFromJavaComponent(env, component);
         if (!hwnd || GetPropW(hwnd, L"NoxWinData"))
@@ -258,7 +258,7 @@ extern "C" {
 
 
 
-    JNIEXPORT void JNICALL Java_io_github_nazuha26_WinNativeLib_configureWindow(
+    JNIEXPORT void JNICALL Java_io_github_nazuha26_jnox_platform_windows_WinNativeLib_configureWindow(
         JNIEnv* env, jobject, jobject component, jint titleBarHeight, jint captionButtonsWidth, jboolean isResizable, jboolean isMaximizable)
     {
         HWND hwnd = Utils::GetHwndFromJavaComponent(env, component);
@@ -274,7 +274,7 @@ extern "C" {
         else { style &= ~WS_MAXIMIZEBOX; }
 
         SetWindowLongPtrW(hwnd, GWL_STYLE, style);
-        
+
         Utils::WindowData* data = static_cast<Utils::WindowData*>(GetPropW(hwnd, L"NoxWinData"));
         if (data)
         {
@@ -290,7 +290,7 @@ extern "C" {
 
 
 
-    JNIEXPORT jdoubleArray JNICALL Java_io_github_nazuha26_WinNativeLib_getDPIScale(
+    JNIEXPORT jdoubleArray JNICALL Java_io_github_nazuha26_jnox_platform_windows_WinNativeLib_getDPIScale(
         JNIEnv* env, jobject, jobject component)
     {
         HWND hwnd = Utils::GetHwndFromJavaComponent(env, component);
@@ -310,28 +310,28 @@ extern "C" {
 
 
 
-    JNIEXPORT void JNICALL Java_io_github_nazuha26_WinNativeLib_minimizeWindow(JNIEnv* env, jobject, jobject component)
+    JNIEXPORT void JNICALL Java_io_github_nazuha26_jnox_platform_windows_WinNativeLib_minimizeWindow(JNIEnv* env, jobject, jobject component)
     {
         HWND hwnd = Utils::GetHwndFromJavaComponent(env, component);
         if (hwnd)
             PostMessageW(hwnd, WM_SYSCOMMAND, SC_MINIMIZE, 0);
     }
 
-    JNIEXPORT void JNICALL Java_io_github_nazuha26_WinNativeLib_maximizeWindow(JNIEnv* env, jobject, jobject component)
+    JNIEXPORT void JNICALL Java_io_github_nazuha26_jnox_platform_windows_WinNativeLib_maximizeWindow(JNIEnv* env, jobject, jobject component)
     {
         HWND hwnd = Utils::GetHwndFromJavaComponent(env, component);
         if (hwnd)
             PostMessageW(hwnd, WM_SYSCOMMAND, SC_MAXIMIZE, 0);
     }
 
-    JNIEXPORT void JNICALL Java_io_github_nazuha26_WinNativeLib_restoreWindow(JNIEnv* env, jobject, jobject component)
+    JNIEXPORT void JNICALL Java_io_github_nazuha26_jnox_platform_windows_WinNativeLib_restoreWindow(JNIEnv* env, jobject, jobject component)
     {
         HWND hwnd = Utils::GetHwndFromJavaComponent(env, component);
         if (hwnd)
             PostMessageW(hwnd, WM_SYSCOMMAND, SC_RESTORE, 0);
     }
 
-    JNIEXPORT void JNICALL Java_io_github_nazuha26_WinNativeLib_closeWindow(JNIEnv* env, jobject, jobject component)
+    JNIEXPORT void JNICALL Java_io_github_nazuha26_jnox_platform_windows_WinNativeLib_closeWindow(JNIEnv* env, jobject, jobject component)
     {
         HWND hwnd = Utils::GetHwndFromJavaComponent(env, component);
         if (hwnd)
@@ -340,7 +340,7 @@ extern "C" {
 
 
 
-    JNIEXPORT void JNICALL Java_io_github_nazuha26_WinNativeLib_unhookWindow(JNIEnv* env, jobject, jobject component)
+    JNIEXPORT void JNICALL Java_io_github_nazuha26_jnox_platform_windows_WinNativeLib_unhookWindow(JNIEnv* env, jobject, jobject component)
     {
         HWND hwnd = Utils::GetHwndFromJavaComponent(env, component);
         Utils::WindowData* data = static_cast<Utils::WindowData*>(GetPropW(hwnd, L"NoxWinData"));
@@ -355,7 +355,7 @@ extern "C" {
 
 
 
-    JNIEXPORT void JNICALL Java_io_github_nazuha26_WinNativeLib_setBackgroundColor(
+    JNIEXPORT void JNICALL Java_io_github_nazuha26_jnox_platform_windows_WinNativeLib_setBackgroundColor(
         JNIEnv* env, jobject, jobject component, jint r, jint g, jint b)
     {
         HWND hwnd = Utils::GetHwndFromJavaComponent(env, component);
@@ -376,7 +376,7 @@ extern "C" {
     /**
      * @note Supported Windows 11 and higher only
      */
-    JNIEXPORT void JNICALL Java_io_github_nazuha26_WinNativeLib_setBorderColor(
+    JNIEXPORT void JNICALL Java_io_github_nazuha26_jnox_platform_windows_WinNativeLib_setBorderColor(
         JNIEnv* env, jobject, jobject component, jint r, jint g, jint b)
     {
         HWND hwnd = Utils::GetHwndFromJavaComponent(env, component);
@@ -388,7 +388,7 @@ extern "C" {
         DwmSetWindowAttribute(hwnd, DWMWA_BORDER_COLOR, &color, sizeof(color));
     }
 
-    JNIEXPORT void JNICALL Java_io_github_nazuha26_WinNativeLib_setMinSize(
+    JNIEXPORT void JNICALL Java_io_github_nazuha26_jnox_platform_windows_WinNativeLib_setMinSize(
         JNIEnv* env, jobject, jobject component, jint minWidth, jint minHeight)
     {
         HWND hwnd = Utils::GetHwndFromJavaComponent(env, component);

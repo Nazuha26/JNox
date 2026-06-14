@@ -1,4 +1,4 @@
-package io.github.nazuha26;
+package io.github.nazuha26.jnox.theme;
 
 import java.awt.*;
 

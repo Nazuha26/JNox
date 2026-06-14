@@ -1,6 +1,6 @@
-package io.github.nazuha26.components;
+package io.github.nazuha26.jnox.scroll;
 
-import io.github.nazuha26.NoxTheme;
+import io.github.nazuha26.jnox.theme.NoxTheme;
 
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicScrollBarUI;

@@ -1,6 +1,6 @@
-package io.github.nazuha26.components;
+package io.github.nazuha26.jnox.border;
 
-import io.github.nazuha26.NoxTheme;
+import io.github.nazuha26.jnox.theme.NoxTheme;
 
 import javax.swing.BorderFactory;
 import javax.swing.border.Border;

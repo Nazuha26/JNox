@@ -1,6 +1,7 @@
-package io.github.nazuha26.components;
+package io.github.nazuha26.jnox.button;
 
-import io.github.nazuha26.NoxTheme;
+import io.github.nazuha26.jnox.Nox;
+import io.github.nazuha26.jnox.theme.NoxTheme;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,8 +12,14 @@ import java.awt.geom.RoundRectangle2D;
 
 public class NoxButton extends JButton {
 
-    NoxButton(String text) {
-        super(text);
+    public NoxButton() {
+        this("");
+    }
+
+    public NoxButton(String text) {
+        super(text == null ? "" : text);
+
+        Nox.install();
 
         setContentAreaFilled(false);
         setFocusPainted(false);
@@ -49,15 +56,17 @@ public class NoxButton extends JButton {
         float w = getWidth();
         float h = getHeight();
 
-        float bgX = 4f, bgY = 4f;
-        float bgW = w - 8f, bgH = h - 8f;
+        float bgX = 4f;
+        float bgY = 4f;
+        float bgW = w - 8f;
+        float bgH = h - 8f;
 
-        // Background
         if (isDefaultButton()) {
             g2.setColor(NoxTheme.ACCENT_PRIMARY);
         } else {
             g2.setColor(NoxTheme.TRANSPARENT);
         }
+
         int arc = 10;
         g2.fill(new RoundRectangle2D.Float(bgX, bgY, bgW, bgH, arc, arc));
 

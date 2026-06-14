@@ -1,4 +1,4 @@
-package io.github.nazuha26.utils;
+package io.github.nazuha26.jnox.icon;
 
 import lombok.extern.slf4j.Slf4j;
 

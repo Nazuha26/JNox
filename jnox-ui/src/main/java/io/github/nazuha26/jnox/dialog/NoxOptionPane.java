@@ -1,7 +1,10 @@
-package io.github.nazuha26.components;
+package io.github.nazuha26.jnox.dialog;
 
-import io.github.nazuha26.NoxTheme;
-import io.github.nazuha26.utils.IconManager;
+import io.github.nazuha26.jnox.window.NoxNativeDialog;
+import io.github.nazuha26.jnox.button.NoxButton;
+import io.github.nazuha26.jnox.scroll.NoxScrollPane;
+import io.github.nazuha26.jnox.theme.NoxTheme;
+import io.github.nazuha26.jnox.icon.IconManager;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
@@ -107,12 +110,9 @@ public class NoxOptionPane {
             Window window = parentComponent == null ? JOptionPane.getRootFrame() : SwingUtilities.getWindowAncestor(parentComponent);
             Frame owner = window instanceof Frame ? (Frame) window : null;
 
-            dialog = Nox.dialog(owner, title)
-                    .modal(true)
-                    .resizable(false)
-                    .defaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE)
-                    .build();
+            dialog = new NoxNativeDialog(owner, title, true);
             dialog.setResizable(false);
+            dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
             JPanel body = dialog.getBody();
             body.setLayout(new BorderLayout(15, 15));
@@ -177,13 +177,13 @@ public class NoxOptionPane {
         }
 
         private NoxButton createButton(String text, OptionResult actionResult) {
-            return Nox.button(text)
-                    .preferredSize(100, 32)
-                    .onClick(e -> {
-                        this.result = actionResult;
-                        dialog.dispose();
-                    })
-                    .build();
+            NoxButton button = new NoxButton(text);
+            button.setPreferredSize(new Dimension(100, 32));
+            button.addActionListener(e -> {
+                this.result = actionResult;
+                dialog.dispose();
+            });
+            return button;
         }
 
         /**
@@ -243,10 +243,8 @@ public class NoxOptionPane {
 
             messageArea.setPreferredSize(new Dimension(width, contentSize.height));
 
-            NoxScrollPane scrollPane = Nox.scrollPane()
-                    .view(messageArea)
-                    .preferredSize(width, height)
-                    .build();
+            NoxScrollPane scrollPane = new NoxScrollPane(messageArea);
+            scrollPane.setPreferredSize(new Dimension(width, height));
 
             scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
             scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);

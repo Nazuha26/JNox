@@ -1,6 +1,7 @@
-package io.github.nazuha26.components;
+package io.github.nazuha26.jnox.input;
 
-import io.github.nazuha26.NoxTheme;
+import io.github.nazuha26.jnox.Nox;
+import io.github.nazuha26.jnox.theme.NoxTheme;
 import lombok.Getter;
 
 import javax.swing.*;
@@ -9,14 +10,20 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.geom.RoundRectangle2D;
 
-public class NoxTextField extends JTextField {
+public class NoxPasswordField extends JPasswordField {
     private static final int ARC = 10;
     private static final Insets PADDING = new Insets(6, 10, 6, 10);
 
     @Getter private String placeholder = "";
 
-    NoxTextField(String text) {
+    public NoxPasswordField() {
+        this("");
+    }
+
+    public NoxPasswordField(String text) {
         super(text == null ? "" : text);
+
+        Nox.install();
 
         setOpaque(false);
         setBorder(BorderFactory.createEmptyBorder(
@@ -33,6 +40,7 @@ public class NoxTextField extends JTextField {
         setSelectedTextColor(NoxTheme.TEXT_PRIMARY);
         setDisabledTextColor(NoxTheme.TEXT_PRIMARY.darker());
         setBackground(NoxTheme.BG_SURFACE);
+        setEchoChar('*');
 
         addFocusListener(new FocusAdapter() {
             @Override
@@ -68,7 +76,7 @@ public class NoxTextField extends JTextField {
 
         super.paintComponent(g);
 
-        if (getText().isEmpty() && placeholder != null && !placeholder.isBlank()) {
+        if (getPassword().length == 0 && placeholder != null && !placeholder.isBlank()) {
             Graphics2D placeholderGraphics = (Graphics2D) g.create();
             placeholderGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             placeholderGraphics.setFont(getFont());

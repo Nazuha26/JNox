@@ -1,4 +1,4 @@
-package io.github.nazuha26.components;
+package io.github.nazuha26.jnox.log;
 
 import java.awt.*;
 

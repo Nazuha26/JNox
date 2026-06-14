@@ -1,9 +1,8 @@
-package io.github.nazuha26.components;
+package io.github.nazuha26.jnox;
 
-import io.github.nazuha26.NoxTheme;
+import io.github.nazuha26.jnox.theme.NoxTheme;
 
 import javax.swing.*;
-import java.awt.*;
 
 public final class Nox {
     private static boolean installed;
@@ -55,67 +54,5 @@ public final class Nox {
         UIManager.put("TextPane.selectionForeground", NoxTheme.TEXT_PRIMARY);
 
         installed = true;
-    }
-
-    public static NoxFrameBuilder frame() {
-        install();
-        return new NoxFrameBuilder();
-    }
-
-    public static NoxDialogBuilder dialog() {
-        install();
-        return new NoxDialogBuilder();
-    }
-
-    public static NoxDialogBuilder dialog(Frame owner) {
-        install();
-        return new NoxDialogBuilder().owner(owner);
-    }
-
-    public static NoxDialogBuilder dialog(Frame owner, String title) {
-        install();
-        return new NoxDialogBuilder()
-                .owner(owner)
-                .title(title);
-    }
-
-    public static NoxButtonBuilder button() {
-        install();
-        return new NoxButtonBuilder();
-    }
-
-    public static NoxButtonBuilder button(String text) {
-        install();
-        return new NoxButtonBuilder().text(text);
-    }
-
-    public static NoxScrollPaneBuilder scrollPane() {
-        install();
-        return new NoxScrollPaneBuilder();
-    }
-
-    public static NoxTextFieldBuilder textField() {
-        install();
-        return new NoxTextFieldBuilder();
-    }
-
-    public static NoxTextFieldBuilder textField(String text) {
-        install();
-        return new NoxTextFieldBuilder().text(text);
-    }
-
-    public static NoxPasswordFieldBuilder passwordField() {
-        install();
-        return new NoxPasswordFieldBuilder();
-    }
-
-    public static NoxPasswordFieldBuilder passwordField(String text) {
-        install();
-        return new NoxPasswordFieldBuilder().text(text);
-    }
-
-    public static NoxLogPaneBuilder logPane() {
-        install();
-        return new NoxLogPaneBuilder();
     }
 }

@@ -1,8 +1,8 @@
-package io.github.nazuha26.components;
+package io.github.nazuha26.jnox.window;
 
-import io.github.nazuha26.NoxTheme;
-import io.github.nazuha26.OsUtils;
-import io.github.nazuha26.WinNativeLib;
+import io.github.nazuha26.jnox.platform.OsUtils;
+import io.github.nazuha26.jnox.platform.windows.WinNativeLib;
+import io.github.nazuha26.jnox.theme.NoxTheme;
 import lombok.Getter;
 
 import javax.swing.*;
@@ -18,6 +18,7 @@ class NoxWindowDelegate {
     public static final int CAPTION_BUTTON_HEIGHT = 32;
 
     private final Window window;
+
     @Getter private final WinNativeLib nativeLib = new WinNativeLib();
     @Getter private boolean nativeInstalled;
 
@@ -35,12 +36,16 @@ class NoxWindowDelegate {
 
     public void install(String title, Runnable onDoubleClickTitleBar, CaptionButton... buttons) {
         if (OsUtils.isWindows()) {
-            if (window instanceof Frame) ((Frame) window).setUndecorated(true);
-            else if (window instanceof Dialog) ((Dialog) window).setUndecorated(true);
+            if (window instanceof Frame frame) {
+                frame.setUndecorated(true);
+            } else if (window instanceof Dialog dialog) {
+                dialog.setUndecorated(true);
+            }
         }
 
-        Container contentPane = window instanceof RootPaneContainer
-                ? ((RootPaneContainer) window).getContentPane() : window;
+        Container contentPane = window instanceof RootPaneContainer rootPaneContainer
+                ? rootPaneContainer.getContentPane()
+                : window;
 
         contentPane.setLayout(new BorderLayout());
         contentPane.setBackground(NoxTheme.BG_PRIMARY);
@@ -52,9 +57,10 @@ class NoxWindowDelegate {
         if (window instanceof NoxNativeFrame frame) {
             frame.addWindowStateListener(e -> {
                 boolean isMaximized = (e.getNewState() & Frame.MAXIMIZED_BOTH) == Frame.MAXIMIZED_BOTH;
-                for (CaptionButton btn : buttons) {
-                    if (btn.getButtonType() == CaptionButton.CaptionButtonType.MAXIMIZE) {
-                        btn.setWindowMaximized(isMaximized);
+
+                for (CaptionButton button : buttons) {
+                    if (button.getButtonType() == CaptionButton.CaptionButtonType.MAXIMIZE) {
+                        button.setWindowMaximized(isMaximized);
                         break;
                     }
                 }
@@ -65,23 +71,22 @@ class NoxWindowDelegate {
         contentPane.add(body, BorderLayout.CENTER);
     }
 
-
-
     private void configureTitleBar(String title, CaptionButton... buttons) {
         titleBar.setOpaque(true);
         titleBar.setBackground(NoxTheme.BG_PRIMARY);
         titleBar.setPreferredSize(new Dimension(0, TITLE_BAR_HEIGHT));
         titleBar.setBorder(BorderFactory.createEmptyBorder(0, TITLE_BAR_LEFT_INSET, 0, 0));
 
-        titleLabel.setText(title);
+        titleLabel.setText(title == null ? "" : title);
         titleLabel.setFont(NoxTheme.FONT_BOLD);
         titleLabel.setForeground(NoxTheme.TEXT_PRIMARY);
 
         captionButtons.setOpaque(false);
-        for (CaptionButton btn : buttons) {
-            btn.setPreferredSize(new Dimension(CAPTION_BUTTON_WIDTH, CAPTION_BUTTON_HEIGHT));
-            captionButtons.add(btn);
+        for (CaptionButton button : buttons) {
+            button.setPreferredSize(new Dimension(CAPTION_BUTTON_WIDTH, CAPTION_BUTTON_HEIGHT));
+            captionButtons.add(button);
         }
+
         updateCaptionButtonsWidth();
 
         titleBar.add(titleLabel, BorderLayout.WEST);
@@ -95,9 +100,12 @@ class NoxWindowDelegate {
 
     public void updateCaptionButtonsWidth() {
         int visibleCount = 0;
-        for (Component c : captionButtons.getComponents()) {
-            if (c.isVisible()) visibleCount++;
+        for (Component component : captionButtons.getComponents()) {
+            if (component.isVisible()) {
+                visibleCount++;
+            }
         }
+
         int totalWidth = visibleCount * CAPTION_BUTTON_WIDTH;
         captionButtons.setPreferredSize(new Dimension(totalWidth, TITLE_BAR_HEIGHT));
         captionButtons.revalidate();
@@ -108,18 +116,45 @@ class NoxWindowDelegate {
         }
     }
 
+    public void updateNativeMinimumSize() {
+        if (!OsUtils.isWindows() || !nativeInstalled) {
+            return;
+        }
+
+        Dimension minimumSize = window.getMinimumSize();
+        int captionWidth = captionButtons.getPreferredSize().width;
+
+        int minWidth = Math.max(
+                minimumSize.width,
+                captionWidth + TITLE_BAR_LEFT_INSET + 128
+        );
+
+        int minHeight = Math.max(
+                minimumSize.height,
+                TITLE_BAR_HEIGHT
+        );
+
+        nativeLib.setMinSize(window, minWidth, minHeight);
+    }
+
     private void installFallbackDrag(Runnable onDoubleClick) {
         MouseAdapter adapter = new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                if (!SwingUtilities.isLeftMouseButton(e) || OsUtils.isWindows()) return;
+                if (!SwingUtilities.isLeftMouseButton(e) || OsUtils.isWindows()) {
+                    return;
+                }
+
                 fallbackDragStartScreen = e.getLocationOnScreen();
                 fallbackWindowStart = window.getLocation();
             }
 
             @Override
             public void mouseDragged(MouseEvent e) {
-                if (OsUtils.isWindows() || fallbackDragStartScreen == null || fallbackWindowStart == null) return;
+                if (OsUtils.isWindows() || fallbackDragStartScreen == null || fallbackWindowStart == null) {
+                    return;
+                }
+
                 Point screen = e.getLocationOnScreen();
                 int dx = screen.x - fallbackDragStartScreen.x;
                 int dy = screen.y - fallbackDragStartScreen.y;
@@ -166,36 +201,41 @@ class NoxWindowDelegate {
     }
 
     public void setTitle(String title) {
-        titleLabel.setText(title);
+        titleLabel.setText(title == null ? "" : title);
     }
 
     private void installNativeWindow() {
-        int captionWidth = captionButtons.getPreferredSize().width;
         nativeLib.hookWindow(window);
-        nativeLib.configureWindow(window, TITLE_BAR_HEIGHT, captionWidth, isWindowResizable(), isWindowMaximizable());
-        nativeLib.setBackgroundColor(window, NoxTheme.BG_PRIMARY.getRed(), NoxTheme.BG_PRIMARY.getGreen(), NoxTheme.BG_PRIMARY.getBlue());
-        nativeLib.setBorderColor(window, NoxTheme.ACCENT_PRIMARY.getRed(), NoxTheme.ACCENT_PRIMARY.getGreen(), NoxTheme.ACCENT_PRIMARY.getBlue());
-
-        Dimension minimumSize = window.getMinimumSize();
-
-        int minWidth = Math.max(
-                minimumSize.width,
-                captionWidth + TITLE_BAR_LEFT_INSET + 128
-        );
-
-        int minHeight = Math.max(
-                minimumSize.height,
-                TITLE_BAR_HEIGHT
-        );
-
-        nativeLib.setMinSize(window, minWidth, minHeight);
-
         nativeInstalled = true;
+
+        updateCaptionButtonsWidth();
+
+        nativeLib.setBackgroundColor(
+                window,
+                NoxTheme.BG_PRIMARY.getRed(),
+                NoxTheme.BG_PRIMARY.getGreen(),
+                NoxTheme.BG_PRIMARY.getBlue()
+        );
+
+        nativeLib.setBorderColor(
+                window,
+                NoxTheme.ACCENT_PRIMARY.getRed(),
+                NoxTheme.ACCENT_PRIMARY.getGreen(),
+                NoxTheme.ACCENT_PRIMARY.getBlue()
+        );
+
+        updateNativeMinimumSize();
     }
 
     private boolean isWindowResizable() {
-        if (window instanceof Frame) return ((Frame) window).isResizable();
-        if (window instanceof Dialog) return ((Dialog) window).isResizable();
+        if (window instanceof Frame frame) {
+            return frame.isResizable();
+        }
+
+        if (window instanceof Dialog dialog) {
+            return dialog.isResizable();
+        }
+
         return false;
     }
 

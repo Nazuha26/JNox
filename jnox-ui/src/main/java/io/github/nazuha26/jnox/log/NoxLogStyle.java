@@ -1,6 +1,6 @@
-package io.github.nazuha26.components;
+package io.github.nazuha26.jnox.log;
 
-import io.github.nazuha26.NoxTheme;
+import io.github.nazuha26.jnox.theme.NoxTheme;
 
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;

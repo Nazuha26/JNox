@@ -1,14 +1,21 @@
-package io.github.nazuha26.components;
+package io.github.nazuha26.jnox.scroll;
 
-import io.github.nazuha26.NoxTheme;
+import io.github.nazuha26.jnox.Nox;
+import io.github.nazuha26.jnox.theme.NoxTheme;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class NoxScrollPane extends JScrollPane {
 
-    NoxScrollPane(Component view) {
+    public NoxScrollPane() {
+        this(null);
+    }
+
+    public NoxScrollPane(Component view) {
         super(view);
+
+        Nox.install();
 
         setOpaque(false);
         getViewport().setOpaque(false);
@@ -22,12 +29,10 @@ public class NoxScrollPane extends JScrollPane {
         getVerticalScrollBar().setPreferredSize(new Dimension(10, 0));
         getHorizontalScrollBar().setPreferredSize(new Dimension(0, 10));
 
-        // Bottom Left Corner
         JPanel corner = new JPanel();
         corner.setBackground(NoxTheme.TRANSPARENT);
         setCorner(JScrollPane.LOWER_RIGHT_CORNER, corner);
 
-        // enhanced mouse wheel scrolling
         getVerticalScrollBar().setUnitIncrement(16);
     }
 }

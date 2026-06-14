@@ -1,6 +1,8 @@
-package io.github.nazuha26.components;
+package io.github.nazuha26.jnox.log;
 
-import io.github.nazuha26.NoxTheme;
+import io.github.nazuha26.jnox.border.NoxBorders;
+import io.github.nazuha26.jnox.scroll.NoxScrollPane;
+import io.github.nazuha26.jnox.theme.NoxTheme;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,7 +20,7 @@ public class NoxLogPane extends NoxScrollPane {
     @Getter @Setter private boolean autoScroll = true;
     @Getter private int maxLines = DEFAULT_MAX_LINES;
 
-    NoxLogPane() {
+    public NoxLogPane() {
         this(new NoxLogTextPane());
     }
 

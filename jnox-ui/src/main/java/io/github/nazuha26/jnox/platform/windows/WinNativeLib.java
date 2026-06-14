@@ -1,5 +1,6 @@
-package io.github.nazuha26;
+package io.github.nazuha26.jnox.platform.windows;
 
+import io.github.nazuha26.jnox.platform.OsUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.awt.*;
